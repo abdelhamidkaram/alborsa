@@ -11,7 +11,7 @@
 | Antispam Bee | `2.11.13` | فلترة Spam لتعليقات WordPress | توافقه مع نوع مراجعات الوسطاء وطريقة إرسالها |
 | Breeze | `2.5.16` | Page cache وتحسينات Frontend وإدارة Purge | إعدادات Cache وVarnish والاستثناءات وعدم كسر Widgets |
 | Object Cache Pro | `1.25.5` | Persistent object cache | صحة الاتصال، TTLs، حدود الذاكرة، وعدم استخدام مزايا 2.x |
-| Polylang | `3.8.9` | اللغات والترجمات وبنية Language URLs | صيغة `/ar/`، اللغة الافتراضية، CPTs، Taxonomies وMeta sync |
+| Polylang | `3.8.9` | اللغات والترجمات وبنية Language URLs | مطابقة العربية على `/` والإنجليزية على `/en/`، وCPTs وTaxonomies وMeta sync |
 | WP 2FA | `4.1.0` | حماية حسابات فريق WordPress | هل 2FA إلزامي فعلاً، ولأي أدوار، وخطة recovery |
 | Yoast SEO | `28.4` | Canonical، robots، sitemap، metadata وSchema graph | إعداد Search appearance وتكامل أنواع المحتوى المخصصة |
 | WPS Hide Login | `1.9.19` | تغيير مسار صفحة تسجيل الدخول | المسار الحالي، توثيقه بأمان، واختبار الاستعادة |
@@ -33,7 +33,7 @@
 - الحقول المحايدة، مثل رمز المزود وISIN، تنسخ بين الترجمات.
 - الحقول التحريرية، مثل الوصف والمزايا والعيوب، تترجم بشكل مستقل.
 - يسمح Polylang باستخدام `wpml-config.xml` لتحديد سياسة الحقول؛ اسم الملف لا يعني أن WPML مثبت.
-- لا نفترض أن `/ar/` مضبوط من مجرد وجود الإضافة؛ يلزم فحص URL modification settings.
+- اعتمد القرار D-002 العربية على `/` من دون بادئة والإنجليزية تحت `/en/`؛ يلزم فحص URL modification settings للتأكد من مطابقتها على Staging.
 
 مراجع Polylang الرسمية:
 
