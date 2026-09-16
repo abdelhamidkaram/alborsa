@@ -20,6 +20,8 @@ The `wp alborsa assets import <file> [--dry-run]` command provides bounded,
 language-explicit CSV imports with row reports and duplicate prevention.
 Provider-neutral normalized quote contracts and a deterministic mock provider
 are included without configuring or contacting a real market-data source.
+Schema version 4 and QuoteRepository persist only the latest normalized quote
+per asset/provider; synchronization, caching, and quote REST delivery are not yet wired.
 
 It does not yet register market-data or write REST routes, market providers,
 user accounts, watchlists, alerts, frontend layouts, CSS, or theme templates.

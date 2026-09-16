@@ -37,6 +37,23 @@ final class MigrationRunnerTest extends UnitTestCase {
 		self::assertStringNotContainsString( 'FOREIGN KEY', $sql );
 	}
 
+	public function test_market_quote_schema_contains_snapshot_columns_and_unique_key(): void {
+		$sql = MigrationRunner::market_quotes_table_schema(
+			'wp_alb_market_quotes',
+			'DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+		);
+
+		self::assertStringContainsString( 'CREATE TABLE wp_alb_market_quotes', $sql );
+		self::assertStringContainsString( 'asset_id bigint(20) unsigned NOT NULL', $sql );
+		self::assertStringContainsString( 'provider_key varchar(32) NOT NULL', $sql );
+		self::assertStringContainsString( 'price decimal(30,10) NULL', $sql );
+		self::assertStringContainsString( 'market_timestamp datetime NOT NULL', $sql );
+		self::assertStringContainsString( 'delay_seconds int(10) unsigned NOT NULL default 0', $sql );
+		self::assertStringContainsString( 'UNIQUE KEY uq_asset_provider (asset_id, provider_key)', $sql );
+		self::assertStringContainsString( 'KEY ix_status_received (status, received_at)', $sql );
+		self::assertStringNotContainsString( 'FOREIGN KEY', $sql );
+	}
+
 	public function test_repeat_run_stores_both_migrations_once_and_is_idempotent(): void {
 		$options        = array();
 		$version_writes = 0;
@@ -44,13 +61,13 @@ final class MigrationRunnerTest extends UnitTestCase {
 
 		Functions\when( 'dbDelta' )->justReturn( array() );
 
-		$this->set_wpdb_for_test( $this->create_stub_wpdb( 'wp_alb_relationships' ) );
+		$this->set_wpdb_for_test( $this->create_stub_wpdb( array( 'wp_alb_relationships', 'wp_alb_market_quotes' ) ) );
 		$runner = new MigrationRunner( new RoleCapabilities( array() ) );
 
 		self::assertNull( $runner->run() );
 		self::assertNull( $runner->run() );
 		self::assertSame( MigrationRunner::LATEST_VERSION, $options[ MigrationRunner::VERSION_OPTION ] );
-		self::assertSame( 3, $version_writes );
+		self::assertSame( 4, $version_writes );
 		self::assertArrayNotHasKey( MigrationRunner::LOCK_OPTION, $options );
 	}
 
@@ -59,21 +76,23 @@ final class MigrationRunnerTest extends UnitTestCase {
 		$version_writes = 0;
 		$this->mock_options( $options, $version_writes );
 
-		$executed_sql = '';
+		$executed_sql = array();
 		Functions\when( 'dbDelta' )->alias(
 			static function ( string $sql ) use ( &$executed_sql ): array {
-				$executed_sql = $sql;
+				$executed_sql[] = $sql;
 				return array();
 			}
 		);
 
-		$this->set_wpdb_for_test( $this->create_stub_wpdb( 'wp_alb_relationships' ) );
+		$this->set_wpdb_for_test( $this->create_stub_wpdb( array( 'wp_alb_relationships', 'wp_alb_market_quotes' ) ) );
 		$runner = new MigrationRunner( new RoleCapabilities( array() ) );
 
 		self::assertNull( $runner->run() );
-		self::assertStringContainsString( 'CREATE TABLE wp_alb_relationships', $executed_sql );
+		self::assertCount( 2, $executed_sql );
+		self::assertStringContainsString( 'CREATE TABLE wp_alb_relationships', $executed_sql[0] );
+		self::assertStringContainsString( 'CREATE TABLE wp_alb_market_quotes', $executed_sql[1] );
 		self::assertSame( MigrationRunner::LATEST_VERSION, $options[ MigrationRunner::VERSION_OPTION ] );
-		self::assertSame( 2, $version_writes );
+		self::assertSame( 3, $version_writes );
 	}
 
 	public function test_run_from_v2_installs_updated_role_capabilities(): void {
@@ -91,6 +110,8 @@ final class MigrationRunnerTest extends UnitTestCase {
 		};
 
 		Functions\when( 'get_role' )->justReturn( $editor_role );
+		Functions\when( 'dbDelta' )->justReturn( array() );
+		$this->set_wpdb_for_test( $this->create_stub_wpdb( 'wp_alb_market_quotes' ) );
 		$runner = new MigrationRunner(
 			new RoleCapabilities(
 				array( 'editor' => array( RoleCapabilities::EDIT_CONTENT ) )
@@ -100,7 +121,48 @@ final class MigrationRunnerTest extends UnitTestCase {
 		self::assertNull( $runner->run() );
 		self::assertSame( array( RoleCapabilities::EDIT_CONTENT ), $editor_role->capabilities );
 		self::assertSame( MigrationRunner::LATEST_VERSION, $options[ MigrationRunner::VERSION_OPTION ] );
+		self::assertSame( 2, $version_writes );
+	}
+
+	public function test_run_from_v3_creates_market_quotes_table(): void {
+		$options        = array( MigrationRunner::VERSION_OPTION => 3 );
+		$version_writes = 0;
+		$this->mock_options( $options, $version_writes );
+
+		$executed_sql = '';
+		Functions\when( 'dbDelta' )->alias(
+			static function ( string $sql ) use ( &$executed_sql ): array {
+				$executed_sql = $sql;
+				return array();
+			}
+		);
+		$this->set_wpdb_for_test( $this->create_stub_wpdb( 'wp_alb_market_quotes' ) );
+
+		$migration_error = ( new MigrationRunner( new RoleCapabilities( array() ) ) )->run();
+
+		self::assertNull( $migration_error );
+		self::assertStringContainsString( 'CREATE TABLE wp_alb_market_quotes', $executed_sql );
+		self::assertSame( 4, $options[ MigrationRunner::VERSION_OPTION ] );
 		self::assertSame( 1, $version_writes );
+	}
+
+	public function test_market_quote_table_failure_does_not_advance_v3(): void {
+		$options        = array( MigrationRunner::VERSION_OPTION => 3 );
+		$version_writes = 0;
+		$this->mock_options( $options, $version_writes );
+		Functions\when( 'dbDelta' )->justReturn( array() );
+
+		$wpdb             = $this->create_stub_wpdb( null );
+		$wpdb->last_error = 'Simulated market quote table error';
+		$this->set_wpdb_for_test( $wpdb );
+
+		$migration_error = ( new MigrationRunner( new RoleCapabilities( array() ) ) )->run();
+
+		self::assertTrue( is_wp_error( $migration_error ) );
+		self::assertSame( 'alborsa_platform_table_creation_failed', $migration_error->get_error_code() );
+		self::assertStringContainsString( 'wp_alb_market_quotes', $migration_error->get_error_message() );
+		self::assertSame( 3, $options[ MigrationRunner::VERSION_OPTION ] );
+		self::assertSame( 0, $version_writes );
 	}
 
 	public function test_table_creation_failure_returns_actionable_error_and_does_not_advance_version(): void {
@@ -185,22 +247,33 @@ final class MigrationRunnerTest extends UnitTestCase {
 	/**
 	 * Creates a lightweight wpdb stub for isolated schema migration testing.
 	 *
-	 * @param string|null $existing_table Simulated table returned by SHOW TABLES LIKE.
+	 * @param string|list<string>|null $existing_tables Simulated tables returned by SHOW TABLES LIKE.
 	 * @return WpdbDouble
 	 */
-	private function create_stub_wpdb( ?string $existing_table ): WpdbDouble {
-		return new class( $existing_table ) extends WpdbDouble {
-			private ?string $existing_table;
+	private function create_stub_wpdb( string|array|null $existing_tables ): WpdbDouble {
+		return new class( $existing_tables ) extends WpdbDouble {
+			/** @var list<string> */
+			private array $existing_tables;
 
-			public function __construct( ?string $existing_table ) {
-				$this->prefix         = 'wp_';
-				$this->existing_table = $existing_table;
+			/** @param string|list<string>|null $existing_tables Simulated existing tables. */
+			public function __construct( string|array|null $existing_tables ) {
+				$this->prefix          = 'wp_';
+				$this->existing_tables = is_array( $existing_tables )
+					? array_values( $existing_tables )
+					: ( null === $existing_tables ? array() : array( $existing_tables ) );
 			}
 
 			public function get_var( ?string $query = null, int $x = 0, int $y = 0 ): mixed {
 				parent::get_var( $query, $x, $y );
+				$unescaped_query = null === $query ? '' : str_replace( '\\', '', $query );
 
-				return $this->existing_table;
+				foreach ( $this->existing_tables as $table ) {
+					if ( str_contains( $unescaped_query, $table ) ) {
+						return $table;
+					}
+				}
+
+				return null;
 			}
 		};
 	}

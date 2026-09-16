@@ -11,7 +11,7 @@
 - Namespace: `Alborsa\Platform` مع Composer PSR-4.
 - الحد الأدنى المعلن في Plugin header هو WordPress `6.6` وPHP `8.1`؛ لم يُنفذ بعد Compatibility smoke test على مصفوفة WordPress حية.
 - `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule`.
-- إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات، والإصدار `3` يثبت قدرات `alb_content` للمدير والمحرر.
+- إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات، والإصدار `3` يثبت قدرات `alb_content`، والإصدار `4` ينشئ جدول أحدث الأسعار.
 - `Shared\\Relationships\\RelationshipRepository` خدمة داخلية غير مسجلة في Module Registry: تضيف وتحذف هوية علاقة دقيقة، وتقرأ المصدر أو الهدف بترتيب `sort_order, id`. لا تحتوي على Hooks أو REST أو Cache أو فحص وجود الكائنات.
 - `Shared\\Relationships\\ContentAssetRelationshipService` يضيف طبقة المنتج فوق Repository: يستقبل كائنات `WP_Post`، يقصر المصادر على الخبر والتحليل والدليل، والهدف على الأصل، وأنواع العلاقة على `mentions` و`analyzes`. لا يسجل Hook أو REST write route أو واجهة Admin.
 - `EditorialModule` يسجل `alb_analysis` و`alb_guide` كنوعي محتوى عامين مع REST القياسي والمراجعات، على `/tahleel/` و`/taleem/`.
@@ -185,6 +185,8 @@ flowchart LR
 | `EmbedProviderInterface` | رمز الأصل وسياق العرض | إعداد Embed مصرح به | عرض Widget فقط بدون اعتبارها API بيانات |
 
 `QuoteProviderInterface` منفذ الآن ويعيد قائمة مرتبة من `NormalizedQuote` أو `WP_Error` معروفاً للدفعة. يرفض الـDTO مدخلات Floating-point للأسعار ويحفظ Decimal strings حتى لا تدخل أخطاء IEEE-754، ويحول ISO-8601 ذي المنطقة الزمنية إلى UTC. `MockQuoteProvider` منفذ للاختبارات والتطوير المحلي فقط بحد 100 رمز، ولا توجد أي تهيئة لمزود خارجي قبل اعتماد D-001.
+
+ينشئ Schema الإصدار `4` جدول `{$wpdb->prefix}alb_market_quotes` لأحدث Snapshot فقط. ينفذ `QuoteRepository` Prepared upsert وقراءة صف واحد بهوية الأصل والمزود. لا يسجل Repository hooks، ولا ينفذ Network I/O أو Object Cache أو REST route؛ تضيفها طبقة المزامنة لاحقاً.
 
 `EmbedProviderInterface` منفصل عمداً: ويدجت العرض لا يُعامل كمصدر API ولا تُنسخ بياناته إلى قاعدة البيانات.
 

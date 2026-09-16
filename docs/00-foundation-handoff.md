@@ -18,6 +18,7 @@
 - Schema version `1` adds administrator capability `manage_alborsa_platform`.
 - Schema version `2` creates the relationships table `{$wpdb->prefix}alb_relationships` idempotently using WordPress `dbDelta` with columns `id`, `from_object_id`, `from_object_type`, `to_object_id`, `to_object_type`, `relation_type`, `sort_order`, and `created_at` (a `datetime` column populated in UTC by `RelationshipRepository`), a unique key preventing duplicate relationships, and a reverse target lookup index. No foreign keys are added.
 - Schema version `3` installs the shared `alb_content` capability map for the implemented product post types. Administrators and editors receive the ten generated primitive edit, publish, read-private, and delete capabilities; `manage_alborsa_platform` remains administrator-only.
+- Schema version `4` creates `{$wpdb->prefix}alb_market_quotes` for the latest normalized snapshot per `(asset_id, provider_key)`. Decimal columns use `decimal(30,10)`, nullable unavailable values remain SQL `NULL`, and `QuoteRepository` performs prepared upserts and exact asset/provider reads without storing price history.
 - The migration uses the current site table prefix and the existing network activation lifecycle, while real WordPress/MySQL table creation and network activation across multiple blogs remain unverified integration boundaries.
 - Soft checks cover the seven existing WordPress plugins.
 - Site Health and `wp alborsa health` report migration and dependency status.
@@ -27,7 +28,7 @@
 
 ## Not implemented
 
-- Other product modules, remaining custom post types and taxonomies, editorial workflow/statuses and metadata, remaining custom REST routes, or remaining feature tables (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
+- Other product modules, remaining custom post types and taxonomies, editorial workflow/statuses and metadata, remaining custom REST routes, or remaining feature tables (`alb_affiliate_links`, `alb_affiliate_clicks`).
 - `RelationshipRepository` persists, deletes, and reads exact relationships with a 100-row read cap. `ContentAssetRelationshipService` validates `WP_Post` object roles and allows `mentions`/`analyzes` links from posts, analyses, and guides to assets; it has no admin UI or REST write route yet. D-002 approves Arabic on `/` and English under `/en/`; the remaining entity registration, write routes, caching, and UI integration remain unimplemented.
 - Real market providers, user accounts, watchlists, or alerts. The quote contract and mock provider are implemented, but no external adapter is selected while D-001 remains open.
 - Theme work, frontend design, CSS, or layouts.

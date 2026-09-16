@@ -14,10 +14,11 @@ use WP_Error;
 defined( 'ABSPATH' ) || exit;
 
 final class MigrationRunner {
-	public const LATEST_VERSION      = 3;
+	public const LATEST_VERSION      = 4;
 	public const VERSION_OPTION      = 'alborsa_platform_db_version';
 	public const LOCK_OPTION         = 'alborsa_platform_migration_lock';
 	public const RELATIONSHIPS_TABLE = 'alb_relationships';
+	public const MARKET_QUOTES_TABLE = 'alb_market_quotes';
 
 	private const LOCK_TTL = 300;
 
@@ -95,6 +96,42 @@ final class MigrationRunner {
 			. "){$charset_collate_clause};";
 	}
 
+	/**
+	 * SQL statement for creating or updating the latest market quotes table.
+	 *
+	 * @param string $table_name Full table name including prefix.
+	 * @param string $charset_collate Optional charset collate clause from wpdb.
+	 * @return string dbDelta-compatible CREATE TABLE statement.
+	 */
+	public static function market_quotes_table_schema( string $table_name, string $charset_collate = '' ): string {
+		$charset_collate_clause = '' !== $charset_collate ? ' ' . $charset_collate : '';
+
+		return "CREATE TABLE {$table_name} (\n"
+			. "  id bigint(20) unsigned NOT NULL auto_increment,\n"
+			. "  asset_id bigint(20) unsigned NOT NULL,\n"
+			. "  provider_key varchar(32) NOT NULL,\n"
+			. "  provider_symbol varchar(64) NOT NULL,\n"
+			. "  price decimal(30,10) NULL,\n"
+			. "  open_price decimal(30,10) NULL,\n"
+			. "  previous_close decimal(30,10) NULL,\n"
+			. "  high_price decimal(30,10) NULL,\n"
+			. "  low_price decimal(30,10) NULL,\n"
+			. "  volume decimal(30,10) NULL,\n"
+			. "  absolute_change decimal(30,10) NULL,\n"
+			. "  percent_change decimal(30,10) NULL,\n"
+			. "  currency char(3) NULL,\n"
+			. "  market_timestamp datetime NOT NULL,\n"
+			. "  received_at datetime NOT NULL,\n"
+			. "  delay_seconds int(10) unsigned NOT NULL default 0,\n"
+			. "  status varchar(16) NOT NULL,\n"
+			. "  payload_hash char(64) NOT NULL,\n"
+			. "  PRIMARY KEY  (id),\n"
+			. "  UNIQUE KEY uq_asset_provider (asset_id, provider_key),\n"
+			. "  KEY ix_provider_symbol (provider_key, provider_symbol),\n"
+			. "  KEY ix_status_received (status, received_at)\n"
+			. "){$charset_collate_clause};";
+	}
+
 	private function migrate_from( int $installed_version ): ?WP_Error {
 		for ( $version = $installed_version + 1; $version <= self::LATEST_VERSION; ++$version ) {
 			$migration_error = $this->migrate_to( $version );
@@ -126,10 +163,25 @@ final class MigrationRunner {
 			return $this->migrate_v2_relationships_table();
 		}
 
+		if ( 4 === $version ) {
+			return $this->migrate_v4_market_quotes_table();
+		}
+
 		return null;
 	}
 
 	private function migrate_v2_relationships_table(): ?WP_Error {
+		return $this->migrate_table( self::RELATIONSHIPS_TABLE, array( self::class, 'relationships_table_schema' ) );
+	}
+
+	private function migrate_v4_market_quotes_table(): ?WP_Error {
+		return $this->migrate_table( self::MARKET_QUOTES_TABLE, array( self::class, 'market_quotes_table_schema' ) );
+	}
+
+	/**
+	 * @param callable(string, string): string $schema_callback Builds dbDelta SQL.
+	 */
+	private function migrate_table( string $table_suffix, callable $schema_callback ): ?WP_Error {
 		global $wpdb;
 
 		if ( ! $wpdb instanceof \wpdb ) {
@@ -154,9 +206,9 @@ final class MigrationRunner {
 			);
 		}
 
-		$table_name      = $wpdb->prefix . self::RELATIONSHIPS_TABLE;
+		$table_name      = $wpdb->prefix . $table_suffix;
 		$charset_collate = $wpdb->get_charset_collate();
-		$sql             = self::relationships_table_schema( $table_name, $charset_collate );
+		$sql             = $schema_callback( $table_name, $charset_collate );
 
 		dbDelta( $sql );
 

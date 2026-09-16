@@ -1,6 +1,6 @@
 # نموذج بيانات منصة البورصة
 
-> الحالة: نُفذ جدول العلاقات `{$wpdb->prefix}alb_relationships` عبر Migration الإصدار 2، وسُجلت أنواع المحتوى `alb_analysis` و`alb_guide` و`alb_asset` والتصنيفات الأساسية المرتبطة بها. باقي الجداول وأنواع المحتوى والتصنيفات تظل عقوداً مقترحة قبل التنفيذ.
+> الحالة: نُفذ جدول العلاقات `{$wpdb->prefix}alb_relationships` عبر Migration الإصدار 2 وجدول أحدث الأسعار `{$wpdb->prefix}alb_market_quotes` عبر الإصدار 4، وسُجلت أنواع المحتوى `alb_analysis` و`alb_guide` و`alb_asset` والتصنيفات الأساسية المرتبطة بها. باقي الجداول وأنواع المحتوى والتصنيفات تظل عقوداً مقترحة قبل التنفيذ.
 
 ## 1. قاعدة الاختيار
 
@@ -175,9 +175,9 @@ Comment meta:
 
 ## 8. الجداول المخصصة في الـMVP
 
-### `wp_alb_market_quotes`
+### `{$wpdb->prefix}alb_market_quotes` (منفذ في Migration الإصدار 4؛ مثال: `wp_alb_market_quotes`)
 
-> حالة التنفيذ: الجدول نفسه لم ينفذ بعد. نُفذ عقد `NormalizedQuote` الذي يطابق حقوله المزودة، مع Decimal strings مطبعة وتوقيت UTC وحالات `fresh` و`delayed` و`stale` و`unavailable`.
+> حالة التنفيذ: نُفذ الجدول و`QuoteRepository` للحفظ والقراءة. لا توجد مزامنة أو Cache أو REST route للسعر بعد. يطابق `NormalizedQuote` الحقول المزودة، مع Decimal strings مطبعة وتوقيت UTC وحالات `fresh` و`delayed` و`stale` و`unavailable`.
 
 يحفظ أحدث Snapshot فقط لكل أصل/مزود:
 
@@ -199,7 +199,7 @@ Comment meta:
 - `status`: fresh، delayed، stale، unavailable
 - `payload_hash`
 
-المفتاح الفريد: `(asset_id, provider_key)`.
+المفتاح الفريد المنفذ: `(asset_id, provider_key)`. تستخدم حقول الأرقام `decimal(30,10)`، ولا توجد Foreign Keys أو جداول تاريخ أسعار ضمن الـMVP.
 
 لا نخزن الاستجابة الخام كاملة إلا مؤقتاً في Logs محمية عند التشخيص.
 
@@ -235,7 +235,7 @@ Comment meta:
 
 ### `{$wpdb->prefix}alb_relationships` (مثال لموقع مفرد: `wp_alb_relationships`)
 
-نُفذت الـMigration الخاصة بإنشاء هذا الجدول ضمن إصدار Schema رقم `2` عبر `dbDelta`، كما نُفذ `RelationshipRepository` للإدخال والحذف والقراءة الدقيقة. يسجل وقت `created_at` عبر `current_time( 'mysql', true )`، ويتحقق من المعرفات الموجبة والمفاتيح الشبيهة بمفاتيح WordPress من دون اقتطاع. تضيف `ContentAssetRelationshipService` تحقق أدوار الكائنات الفعلية وتسمح حالياً بعلاقتي `mentions` و`analyzes` من الخبر/التحليل/الدليل إلى الأصل. لا توجد Admin UI أو REST write API أو Cache بعد. أما الجداول المخصصة الأخرى في الـMVP (`wp_alb_market_quotes`, `wp_alb_affiliate_links`, `wp_alb_affiliate_clicks`) فتبقى عقوداً مخططة لم تنفذ جداولها بعد.
+نُفذت الـMigration الخاصة بإنشاء هذا الجدول ضمن إصدار Schema رقم `2` عبر `dbDelta`، كما نُفذ `RelationshipRepository` للإدخال والحذف والقراءة الدقيقة. يسجل وقت `created_at` عبر `current_time( 'mysql', true )`، ويتحقق من المعرفات الموجبة والمفاتيح الشبيهة بمفاتيح WordPress من دون اقتطاع. تضيف `ContentAssetRelationshipService` تحقق أدوار الكائنات الفعلية وتسمح حالياً بعلاقتي `mentions` و`analyzes` من الخبر/التحليل/الدليل إلى الأصل. لا توجد Admin UI أو REST write API أو Cache بعد. نُفذ أيضاً جدول `{$wpdb->prefix}alb_market_quotes` وRepository الخاص به في Schema رقم `4`. أما جدولا الأفلييت (`wp_alb_affiliate_links`, `wp_alb_affiliate_clicks`) فيبقيان عقدين مخططين لم ينفذا بعد.
 
 
 ## 9. جداول مؤجلة

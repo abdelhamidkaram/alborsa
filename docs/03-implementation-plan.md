@@ -43,7 +43,7 @@
 
 المدة التقديرية: أسبوع.
 
-حالة التنفيذ في 2026-09-16: نُفذ Scaffold وBootstrap وModule Registry ونظام migrations حتى الإصدار `3` وصلاحيات الإدارة والمحتوى وفحوص Soft dependencies وSite Health وWP-CLI وبوابات الجودة. لم يُشغّل بعد Smoke test على تثبيت WordPress حي، لذلك يظل معيار الخروج الخاص ببيئة WordPress النظيفة بحاجة تحقق تشغيلي.
+حالة التنفيذ في 2026-09-16: نُفذ Scaffold وBootstrap وModule Registry ونظام migrations حتى الإصدار `4` وصلاحيات الإدارة والمحتوى وجدولا العلاقات وأحدث الأسعار وفحوص Soft dependencies وSite Health وWP-CLI وبوابات الجودة. لم يُشغّل بعد Smoke test على تثبيت WordPress حي، لذلك يظل معيار الخروج الخاص ببيئة WordPress النظيفة بحاجة تحقق تشغيلي.
 
 المهام:
 
@@ -95,7 +95,7 @@
 
 المدة التقديرية: 1–2 أسبوع حسب المزود.
 
-حالة التنفيذ: نُفذ `QuoteProviderInterface` و`NormalizedQuote` و`MockQuoteProvider` بدون اتصالات خارجية. اختيار وبناء Adapter حقيقي ينتظر اعتماد D-001، وبقية التخزين والمزامنة والكاش قيد التنفيذ.
+حالة التنفيذ: نُفذ `QuoteProviderInterface` و`NormalizedQuote` و`MockQuoteProvider` بدون اتصالات خارجية، كما نُفذ جدول أحدث الأسعار و`QuoteRepository`. اختيار وبناء Adapter حقيقي ينتظر اعتماد D-001، والمزامنة والكاش وREST قيد التنفيذ.
 
 المهام:
 
@@ -103,7 +103,7 @@
 - Mock Provider وFixtures للاختبار (منفذ كمزود حتمي يقبل Fixtures مطبعة).
 - Adapter المزود الحقيقي.
 - Normalization للعملات والتوقيت والأرقام.
-- جدول أحدث الأسعار وRepository.
+- جدول أحدث الأسعار وRepository (منفذان عبر Schema الإصدار `4`).
 - Scheduled sync وWP-CLI commands.
 - Retry/backoff وstale fallback.
 - Site Health panel لحالة المصدر.
