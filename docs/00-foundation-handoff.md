@@ -17,7 +17,7 @@
 ## Not implemented
 
 - Product modules, custom post types, taxonomies, REST routes, or remaining feature tables (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
-- Relationship service / API and CPT/taxonomy registration (open URL decision D-002 remains unresolved).
+- A minimal internal `RelationshipRepository` now persists, deletes, and reads exact relationships from the existing table; it is not wired as a module or API. CPT/taxonomy registration (open URL decision D-002), REST, caching, and product integration remain unimplemented.
 - Market providers, user accounts, watchlists, or alerts.
 - Theme work, frontend design, CSS, or layouts.
 

@@ -2,7 +2,7 @@
 
 هذا المستودع مخصص لبناء منصة `alborsa.net` على WordPress. بدأ تنفيذ طبقة Foundation للإضافة، بينما تظل وحدات المنتج والتصميم عقوداً مخططة لم تبدأ بعد.
 
-> الحالة في 2026-09-16: نُفذت Foundation مع migration الإصدار 2 لجدول العلاقات `{$wpdb->prefix}alb_relationships` تحت `wp-content/plugins/alborsa-platform`. لا توجد REST endpoints أو أنواع محتوى أو جداول مزايا أخرى أو واجهات Frontend حتى الآن. تبقى أسماء وحدات المنتج وعقودها الواردة في الوثائق مقترحات إلى أن تبدأ مراحلها.
+> الحالة في 2026-09-16: نُفذت Foundation مع migration الإصدار 2 لجدول العلاقات `{$wpdb->prefix}alb_relationships` و`RelationshipRepository` داخلي صغير للقراءة والكتابة والحذف الدقيق تحت `wp-content/plugins/alborsa-platform`. لا توجد REST endpoints أو أنواع محتوى أو جداول مزايا أخرى أو واجهات Frontend حتى الآن. تبقى أسماء وحدات المنتج وعقودها الواردة في الوثائق مقترحات إلى أن تبدأ مراحلها.
 
 ## المنفذ حالياً
 
@@ -11,6 +11,7 @@
 - Module Registry صغير، ووحدة `Foundation` فقط مسجلة حالياً.
 - Activation/deactivation متكرران بأمان، مع دعم التفعيل على Multisite وعدم حذف بيانات دائمة عند التعطيل.
 - نظام Migrations بإصدار محفوظ في Option: الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات `{$wpdb->prefix}alb_relationships` بشكل idempotent عبر `dbDelta` وبدون Foreign Keys، مع مفتاح فريد لمنع التكرار وفهرس للبحث العكسي.
+- `RelationshipRepository` داخلي فقط: يتحقق من المعرفات والمفاتيح قبل الإدخال، يكتب وقت UTC، ويقرأ بحسب المصدر أو الهدف بترتيب ثابت؛ لم يسجل Hook أو REST API أو Cache.
 - Capability واحدة محافظة باسم `manage_alborsa_platform` تضاف لدور `administrator`.
 - فحوص Availability غير ملزمة للإضافات السبع الموجودة، بدون استدعاء APIs تابعة لها وبدون Fatal errors عند غيابها.
 - فحصان داخل Site Health وأمر `wp alborsa health`.
@@ -70,7 +71,7 @@ wp alborsa health
 خارج النطاق مؤقتاً:
 
 - وحدات المنتج التحريرية والتجارية: Editorial وAssets وMarket Data وBrokers وAffiliate وFinancial Tools وSEO وMultilingual integration.
-- أنواع المحتوى والتصنيفات وخدمات العلاقات وREST endpoints والجداول المخصصة الأخرى (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
+- أنواع المحتوى والتصنيفات وREST endpoints والجداول المخصصة الأخرى (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`)؛ خدمة العلاقات المنفذة داخلية فقط وغير مربوطة بعد بوحدة منتج.
 - مزودو البيانات والحسابات وWatchlists وAlerts.
 - الهوية البصرية.
 - القالب وملفات CSS.

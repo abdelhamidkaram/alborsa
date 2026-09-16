@@ -35,6 +35,8 @@ class WpdbDouble {
 	 * @return string
 	 */
 	public function prepare( string $query, mixed ...$args ): string {
+		$query = str_replace( '%i', '`%s`', $query );
+
 		return sprintf( str_replace( '%s', "'%s'", $query ), ...$args );
 	}
 
@@ -63,6 +65,69 @@ class WpdbDouble {
 	 * @var string|null
 	 */
 	public ?string $last_query = null;
+
+	/**
+	 * Last inserted row data.
+	 *
+	 * @var array<string, mixed>|null
+	 */
+	public ?array $last_insert_data = null;
+
+	/**
+	 * Last insert formats.
+	 *
+	 * @var list<string>|null
+	 */
+	public ?array $last_insert_formats = null;
+
+	/**
+	 * Simulated inserted row identifier.
+	 *
+	 * @var int
+	 */
+	public int $insert_id = 0;
+
+	/**
+	 * Inserts a row.
+	 *
+	 * @param string               $table Table name.
+	 * @param array<string, mixed> $data Row data.
+	 * @param list<string>         $format Value formats.
+	 * @return int|false
+	 */
+	public function insert( string $table, array $data, array $format = array() ): int|false {
+		$this->last_query          = 'INSERT INTO ' . $table;
+		$this->last_insert_data    = $data;
+		$this->last_insert_formats = $format;
+
+		return 1;
+	}
+
+	/**
+	 * Executes a query.
+	 *
+	 * @param string $query SQL query.
+	 * @return int|false
+	 */
+	public function query( string $query ): int|false {
+		$this->last_query = $query;
+
+		return 1;
+	}
+
+	/**
+	 * Retrieves result rows.
+	 *
+	 * @param string      $query SQL query.
+	 * @param string|int  $output Output format.
+	 * @return array<int, array<string, mixed>>|null
+	 */
+	public function get_results( string $query, string|int $output = 'OBJECT' ): ?array {
+		unset( $output );
+		$this->last_query = $query;
+
+		return array();
+	}
 
 	/**
 	 * Retrieves variable.
