@@ -1,0 +1,12 @@
+parameters:
+    level: 7
+    paths:
+        - alborsa-platform.php
+        - config
+        - src
+    scanFiles:
+        - phpstan-constants.php
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+        - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+    tmpDir: .phpstan-cache
+

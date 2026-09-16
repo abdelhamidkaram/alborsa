@@ -1,0 +1,4 @@
+wp-content/plugins/alborsa-platform/vendor/
+wp-content/plugins/alborsa-platform/.phpunit.cache/
+wp-content/plugins/alborsa-platform/.phpstan-cache/
+wp-content/plugins/alborsa-platform/coverage/

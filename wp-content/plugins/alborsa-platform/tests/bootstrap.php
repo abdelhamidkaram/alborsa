@@ -1,0 +1,14 @@
+<?php
+/**
+ * Unit test bootstrap.
+ *
+ * @package AlborsaPlatform
+ */
+
+declare(strict_types=1);
+
+define( 'ABSPATH', dirname( __DIR__ ) . '/' );
+define( 'ALBORSA_PLATFORM_FILE', dirname( __DIR__ ) . '/alborsa-platform.php' );
+define( 'ALBORSA_PLATFORM_PATH', dirname( __DIR__ ) . '/' );
+
+require_once ALBORSA_PLATFORM_PATH . 'vendor/autoload.php';
