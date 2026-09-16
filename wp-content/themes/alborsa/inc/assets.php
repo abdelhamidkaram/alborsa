@@ -37,6 +37,17 @@ function enqueue_assets(): void {
 		array( 'alborsa-theme' ),
 		asset_version( '/assets/css/main.css' )
 	);
+
+	wp_enqueue_script(
+		'alborsa-theme-navigation',
+		ALBORSA_THEME_URL . '/assets/js/navigation.js',
+		array(),
+		asset_version( '/assets/js/navigation.js' ),
+		array(
+			'strategy'  => 'defer',
+			'in_footer' => false,
+		)
+	);
 }
 
 /**
