@@ -19,6 +19,7 @@ require_once ALBORSA_THEME_PATH . '/inc/setup.php';
 require_once ALBORSA_THEME_PATH . '/inc/assets.php';
 require_once ALBORSA_THEME_PATH . '/inc/template-tags.php';
 require_once ALBORSA_THEME_PATH . '/inc/market-status.php';
+require_once ALBORSA_THEME_PATH . '/inc/home-content.php';
 
 Alborsa\Theme\Setup\register_hooks();
 Alborsa\Theme\Assets\register_hooks();
