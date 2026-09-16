@@ -32,6 +32,7 @@ function assets(): array {
 			'order'                  => 'ASC',
 			'no_found_rows'          => true,
 			'ignore_sticky_posts'    => true,
+			'suppress_filters'       => false,
 			'update_post_term_cache' => false,
 		)
 	);

@@ -57,6 +57,15 @@ function enqueue_assets(): void {
 			asset_version( '/assets/css/home.css' )
 		);
 	}
+
+	if ( ! is_front_page() ) {
+		wp_enqueue_style(
+			'alborsa-theme-content',
+			ALBORSA_THEME_URL . '/assets/css/content.css',
+			array( 'alborsa-theme-main' ),
+			asset_version( '/assets/css/content.css' )
+		);
+	}
 }
 
 /**
