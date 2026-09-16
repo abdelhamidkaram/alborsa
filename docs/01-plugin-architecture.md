@@ -1,6 +1,6 @@
 # معمارية إضافة alborsa-platform
 
-> الحالة في 2026-09-16: نُفذت Foundation ومرحلة الأصول والمحتوى الخلفية، وبدأت Market Data بعقد `QuoteProviderInterface` و`NormalizedQuote` و`MockQuoteProvider` فقط. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
+> الحالة في 2026-09-16: نُفذت Foundation ومرحلة الأصول والمحتوى الخلفية، وبدأت Market Data بعقد `QuoteProviderInterface` و`NormalizedQuote` و`MockQuoteProvider` فقط. نُفذ القالب المخصص مستقلاً عن منطق المنتج. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
 
 ## حالة تنفيذ Foundation وخطوة العلاقات
 
@@ -53,7 +53,7 @@
 - التكامل مع إضافة SEO بدون تكرار الـ Schema أو Canonical.
 - توفير أدوات استيراد وتشخيص ومراقبة.
 
-### مسؤولية القالب لاحقاً
+### مسؤولية القالب المخصص
 
 - Layout، Typography، Colors، Spacing وResponsive behavior.
 - قوالب الأرشيف والصفحات المفردة.
@@ -95,7 +95,7 @@
 ```mermaid
 flowchart LR
     Admin["لوحة تحرير WordPress"] --> Plugin["alborsa-platform"]
-    Theme["القالب المستقبلي"] --> API["PHP API / REST / Dynamic Blocks"]
+    Theme["قالب alborsa"] --> API["PHP API / REST / Dynamic Blocks"]
     API --> Plugin
 
     Plugin --> Editorial["Editorial"]
@@ -276,6 +276,8 @@ flowchart LR
 1. PHP Query/Service API لقوالب WordPress.
 2. REST API للبيانات التي تحتاج تحديثاً مستقلاً عن Page Cache.
 3. Dynamic Blocks بمخرجات HTML دلالية قليلة التنسيق.
+
+القالب المنفذ حالياً يستخدم استعلامات WordPress العامة للمحتوى المنشور وحقول هوية الأصل العامة الموثقة. لا يقرأ `alb_market_quotes` مباشرة ولا `_alb_provider_mappings`، وتعرض قوالبه حالة عدم توفر السعر إلى أن توفر وحدة Market Data عقد قراءة عام معتمداً. كما لا ينشئ القالب منطق مقارنة وسطاء أو أفلييت أو معادلات أدوات بديلة عن وحدات الإضافة غير المنفذة.
 
 المساران الأولان منفذان للقراءة العامة، وبقية المسارات مستهدفة عند تنفيذ وحداتها:
 

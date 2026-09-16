@@ -25,13 +25,15 @@
 - Rewrite rules use a versioned Foundation service and are soft-flushed once, at late `init`, after activation or a rewrite contract version change.
 - Isolated unit tests verify schema SQL definition and migration lifecycle orchestration.
 - Quality checks run with `composer quality` from the plugin directory.
+- A standalone custom theme now lives at `wp-content/themes/alborsa`. It implements the approved RTL-first Editorial Signal design system, responsive site chrome, the complete homepage composition, news/analysis/education archives, markets/brokers/tools landing pages, editorial and asset singles, search, and 404 states.
+- The theme reads only published WordPress content and the documented public asset identity fields. It does not read the quote table or provider mappings, make frontend market requests, manufacture prices, activate broker CTAs, or expose calculator forms before their plugin services are implemented.
 
 ## Not implemented
 
 - Other product modules, remaining custom post types and taxonomies, editorial workflow/statuses and metadata, remaining custom REST routes, or remaining feature tables (`alb_affiliate_links`, `alb_affiliate_clicks`).
-- `RelationshipRepository` persists, deletes, and reads exact relationships with a 100-row read cap. `ContentAssetRelationshipService` validates `WP_Post` object roles and allows `mentions`/`analyzes` links from posts, analyses, and guides to assets; it has no admin UI or REST write route yet. D-002 approves Arabic on `/` and English under `/en/`; the remaining entity registration, write routes, caching, and UI integration remain unimplemented.
+- `RelationshipRepository` persists, deletes, and reads exact relationships with a 100-row read cap. `ContentAssetRelationshipService` validates `WP_Post` object roles and allows `mentions`/`analyzes` links from posts, analyses, and guides to assets; it has no admin UI or REST write route yet. D-002 approves Arabic on `/` and English under `/en/`; remaining product entity registration, write routes, caching, and administrative/data-service integration remain unimplemented.
 - Real market providers, user accounts, watchlists, or alerts. The quote contract and mock provider are implemented, but no external adapter is selected while D-001 remains open.
-- Theme work, frontend design, CSS, or layouts.
+- Live WordPress visual QA, real content population, menu/page assignment, and compatibility checks with the installed Polylang, Yoast, Breeze, and Object Cache Pro configuration remain staging tasks.
 
 ## Before the next change
 
