@@ -1,6 +1,6 @@
 # نموذج بيانات منصة البورصة
 
-> الحالة: Schema مقترح قبل التنفيذ. لا توجد هذه الأنواع أو الجداول في قاعدة بيانات حالية بعد.
+> الحالة: Schema مقترح قبل التنفيذ، باستثناء جدول العلاقات `{$wpdb->prefix}alb_relationships` (مثال لموقع مفرد: `wp_alb_relationships`) المنفذ عبر Migration الإصدار 2 في إضافة `alborsa-platform`. باقي الجداول وأنواع المحتوى والتصنيفات تظل عقوداً مقترحة قبل التنفيذ.
 
 ## 1. قاعدة الاختيار
 
@@ -141,22 +141,29 @@ Comment meta:
 
 ## 7. العلاقات
 
-العلاقات كثيرة-إلى-كثيرة تحفظ في جدول واحد بدلاً من Meta متكرر عند الحاجة للبحث المعاكس بكفاءة.
+العلاقات كثيرة-إلى-كثيرة تحفظ في جدول مخصص بدلاً من Meta متكرر لتمكين البحث المباشر والمعاكس بكفاءة.
 
-### `wp_alb_relationships`
+### `{$wpdb->prefix}alb_relationships` (منفذ في Migration إصدار 2؛ مثال لموقع مفرد: `wp_alb_relationships`)
 
-| العمود | الوصف |
-|---|---|
-| `id` | Primary key |
-| `from_object_id` | الخبر/التحليل/الدليل/المقارنة |
-| `from_object_type` | نوع الكائن المصدر |
-| `to_object_id` | الأصل أو الوسيط |
-| `to_object_type` | نوع الكائن الهدف |
-| `relation_type` | mentions، analyzes، compares، recommends |
-| `sort_order` | ترتيب اختياري |
-| `created_at` | وقت الإنشاء UTC |
+| العمود | النوع البرمجي في MySQL | الوصف |
+|---|---|---|
+| `id` | `bigint(20) unsigned NOT NULL auto_increment` | Primary key |
+| `from_object_id` | `bigint(20) unsigned NOT NULL` | معرف الكائن المصدر (خبر/تحليل/دليل/مقارنة) |
+| `from_object_type` | `varchar(32) NOT NULL` | نوع الكائن المصدر (مثل `post`, `alb_analysis`) |
+| `to_object_id` | `bigint(20) unsigned NOT NULL` | معرف الكائن الهدف (أصل أو وسيط) |
+| `to_object_type` | `varchar(32) NOT NULL` | نوع الكائن الهدف (مثل `alb_asset`, `alb_broker`) |
+| `relation_type` | `varchar(32) NOT NULL` | نوع العلاقة: `mentions`, `analyzes`, `compares`, `recommends` |
+| `sort_order` | `int(11) NOT NULL default 0` | ترتيب اختياري للعرض |
+| `created_at` | `datetime NOT NULL` | وقت إنشاء العلاقة (حقل `datetime`؛ التزام توقيت UTC يفرضه منطق الخدمة البرمجية عند إدخال البيانات، وهي غير منفذة بعد) |
 
-Unique index يمنع تكرار نفس العلاقة.
+الفهارس والمفاتيح المطبقة:
+- `PRIMARY KEY  (id)`
+- `UNIQUE KEY uq_relationship (from_object_id, from_object_type, to_object_id, to_object_type, relation_type)`: يمنع تكرار نفس العلاقة بين نفس الكائنين لنفس النوع.
+- `KEY ix_target_lookup (to_object_id, to_object_type, relation_type)`: فهرس مناسب ومخصص لاستعلامات البحث المعاكس (البحث عن كل المحتوى المرتبط بأصل أو وسيط محدد).
+
+ملاحظات معمارية:
+- لا تُستخدم قيود Foreign Keys في قاعدة البيانات لأن معرفات الكائنات تشير إلى أنواع كائنات WordPress متعددة.
+- يتم إنشاء الجدول عبر WordPress `dbDelta` داخل `MigrationRunner` لضمان الـIdempotency، ويستخدم الكود البادئة الحالية للموقع `$wpdb->prefix` ودورة التفعيل الحالية للشبكة، في حين يظل التنفيذ الفعلي على خادم MySQL حي وتفعيل الشبكة على مواقع متعددة حداً للتحقق التكاملي.
 
 ## 8. الجداول المخصصة في الـMVP
 
@@ -216,9 +223,10 @@ Unique index يمنع تكرار نفس العلاقة.
 
 يتم تطبيق Retention policy على جدول الضغطات.
 
-### `wp_alb_relationships`
+### `{$wpdb->prefix}alb_relationships` (مثال لموقع مفرد: `wp_alb_relationships`)
 
-موضح في قسم العلاقات ويُنشأ ضمن نفس Migration الخاصة بالـMVP.
+نُفذت الـMigration الخاصة بإنشاء هذا الجدول ضمن إصدار Schema رقم `2` عبر `dbDelta`. خدمة العلاقات البرمجية (Service/API) ستُنفذ ضمن المرحلة الثانية. أما الجداول المخصصة الأخرى في الـMVP (`wp_alb_market_quotes`, `wp_alb_affiliate_links`, `wp_alb_affiliate_clicks`) فتبقى عقوداً مخططة لم تنفذ جداولها بعد.
+
 
 ## 9. جداول مؤجلة
 

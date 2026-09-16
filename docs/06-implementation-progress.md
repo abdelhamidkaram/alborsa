@@ -1,0 +1,71 @@
+# سجل تقدم التنفيذ — alborsa-platform
+
+> هذا الملف هو سجل تتبع للخطوات المنفذة وطابور المهام المفوضة القادمة. يوضح ما نُفذ فعلياً ويفصله بدقة عما هو مقترح أو قيد الانتظار، مع توضيح حدود التحقق التشغيلي.
+
+## 1. ملخص الحالة العامة
+
+- **التاريخ**: 2026-09-16
+- **إصدار قاعدة البيانات المنفذ**: `2` (`alborsa_platform_db_version`)
+- **الوحدات المسجلة**: `FoundationModule` فقط
+- **حالة القرارات الحرجة**: القرار `D-002` (بنية الروابط العربية) ما زال غير محسوم (`Open`)؛ لم يتم تسجيل أي أنواع محتوى (CPTs) أو تصنيفات (Taxonomies) أو مسارات REST API في هذه الخطوة.
+
+## 2. سجل الخطوات المنفذة
+
+### خطوة 1: تأسيس طبقة Foundation (المرحلة 1)
+- **الحالة**: مكتملة
+- **المنفذ فعلياً**:
+  - Plugin bootstrap مع Composer PSR-4 autoloading.
+  - `ModuleRegistry` وواجهة `Module`.
+  - وحدة `FoundationModule`.
+  - `MigrationRunner` بإصدار Schema رقم `1` يهيئ صلاحية `manage_alborsa_platform` لدور `administrator`.
+  - دورة تفعيل وتعطيل آمنة تدعم Multisite مع قفل ترحيل مؤقت (`alborsa_platform_migration_lock`).
+  - فحوص Soft dependencies للإضافات السبع بدون Fatal errors عند غيابها.
+  - فحصان داخل WordPress Site Health وأمر WP-CLI: `wp alborsa health`.
+  - بوابات الجودة: PHPCS، PHPStan (Level 7)، واختبارات وحدة PHPUnit مع Brain Monkey.
+
+### خطوة 2: ترحيل قاعدة بيانات جدول العلاقات (المرحلة 2 — الخطوة الأولى المحدودة)
+- **الحالة**: مكتملة
+- **المنفذ فعلياً**:
+  - ترقية إصدار الـSchema من `1` إلى `2` في `MigrationRunner::LATEST_VERSION`.
+  - إنشاء جدول العلاقات `{$wpdb->prefix}alb_relationships` بشكل idempotent باستخدام WordPress `dbDelta`.
+  - الأعمدة المنفذة وفق وثيقة `docs/02-data-model.md`:
+    - `id bigint(20) unsigned NOT NULL auto_increment`
+    - `from_object_id bigint(20) unsigned NOT NULL`
+    - `from_object_type varchar(32) NOT NULL`
+    - `to_object_id bigint(20) unsigned NOT NULL`
+    - `to_object_type varchar(32) NOT NULL`
+    - `relation_type varchar(32) NOT NULL`
+    - `sort_order int(11) NOT NULL default 0`
+    - `created_at datetime NOT NULL` (حقل `datetime`؛ فرض توقيت UTC هو مسؤولية خدمة العلاقات عند الإدخال مستقبلاً)
+  - المفاتيح والفهارس:
+    - `PRIMARY KEY  (id)`
+    - `UNIQUE KEY uq_relationship (from_object_id, from_object_type, to_object_id, to_object_type, relation_type)`
+    - `KEY ix_target_lookup (to_object_id, to_object_type, relation_type)`
+  - القيود المعمارية الملتزم بها:
+    - عدم إضافة Foreign Keys نظراً لتعدد الكيانات المشار إليها عبر الأنواع المختلفة.
+    - استخدام بادئة الجدول الحالية `{$wpdb->prefix}alb_relationships` (مثال لموقع مفرد: `wp_alb_relationships`) مع الاعتماد على دورة `Activation` الحالية لدعم Multisite.
+    - حفظ الإصدار في قاعدة البيانات فقط بعد التحقق من وجود الجدول، مع إرجاع `WP_Error` وعدم رفع الإصدار عند الفشل.
+    - الحفاظ التام على تكرارية تشغيل Migration الإصدار الأول والثاني بأمان (Idempotency).
+  - الاختبارات:
+    - 5 اختبارات PHPUnit معزولة وموجهة في `MigrationRunnerTest` تفحص صحة استعلام SQL، وترقية الإصدارين 1 و2 معاً، والترقية المباشرة من 1 إلى 2، وفشل إنشاء الجدول، وغياب اتصال قاعدة البيانات.
+- **حدود التحقق التشغيلي**:
+  - **بوابة الجودة الشاملة (`composer quality`)**: تم تشغيلها والتحقق منها بنجاح من قِبل الـOrchestrator المستقل بنتيجة نظيفة بالكامل:
+    - **فحص بناء الجملة (PHP Lint)**: فحص 27 من 27 ملفاً بنجاح دون أي خطأ (27 PHP files linted).
+    - **معايير ووردبريس القياسية (PHPCS)**: اجتياز كامل بدون أي أخطاء أو تحذيرات (PHPCS clean).
+    - **التحليل الساكن المتقدم (PHPStan)**: المستوى السابع دون أخطاء (PHPStan Level 7, 0 errors).
+    - **اختبارات الوحدة (PHPUnit)**: اجتياز كامل بنتيجة **17 tests, 56 assertions** دون أي إخفاق.
+  - **حدود التحقق التكاملي والبيئة الحية**: التنفيذ الفعلي لـ`dbDelta` داخل قاعدة بيانات MySQL/MariaDB حية وتفعيل الشبكة عبر عدة مواقع (Multisite) يظلان حداً للتحقق التكاملي في بيئة ووردبريس حية.
+
+
+## 3. طابور المهام المفوضة القادمة (Delegated Steps Queue)
+
+| الأولوية | المهمة | الحالة | الشروط المسبقة |
+|---|---|---|---|
+| 1 | حسم القرار D-002 بشأن بنية الروابط العربية | Open | فحص إعداد Polylang والاتفاق على المسارات |
+| 2 | تسجيل أنواع المحتوى الأساسية (CPTs): `alb_asset`، `alb_analysis`، `alb_guide` | معلقة | حسم D-002 |
+| 3 | تسجيل التصنيفات (Taxonomies): `alb_topic`، `alb_asset_type`، إلخ | معلقة | حسم D-002 |
+| 4 | خدمة العلاقات (Relationship Service/API) لإدارة القراءة والكتابة في `alb_relationships` | معلقة | اكتمال الخطوة السابقة |
+| 5 | تسجيل الحقول الأساسية والتحقق منها عبر WordPress Meta APIs | معلقة | تسجيل CPTs |
+| 6 | مسارات REST لقراءة الأصول والمحتوى | معلقة | اكتمال الخدمات والحقول |
+| 7 | استيراد الأصول عبر CSV مع تقارير الأخطاء وDry-run | معلقة | استقرار CPT والحقول |
+| 8 | إعداد Polylang و`wpml-config.xml` لمزامنة الحقول | معلقة | تسجيل CPTs والحقول |

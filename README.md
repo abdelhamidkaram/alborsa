@@ -2,7 +2,7 @@
 
 هذا المستودع مخصص لبناء منصة `alborsa.net` على WordPress. بدأ تنفيذ طبقة Foundation للإضافة، بينما تظل وحدات المنتج والتصميم عقوداً مخططة لم تبدأ بعد.
 
-> الحالة في 2026-09-16: نُفذت Foundation أولية قابلة للاختبار تحت `wp-content/plugins/alborsa-platform`. لا توجد REST endpoints أو جداول مزايا أو أنواع محتوى أو واجهات Frontend حتى الآن. تبقى أسماء وحدات المنتج وعقودها الواردة في الوثائق مقترحات إلى أن تبدأ مراحلها.
+> الحالة في 2026-09-16: نُفذت Foundation مع migration الإصدار 2 لجدول العلاقات `{$wpdb->prefix}alb_relationships` تحت `wp-content/plugins/alborsa-platform`. لا توجد REST endpoints أو أنواع محتوى أو جداول مزايا أخرى أو واجهات Frontend حتى الآن. تبقى أسماء وحدات المنتج وعقودها الواردة في الوثائق مقترحات إلى أن تبدأ مراحلها.
 
 ## المنفذ حالياً
 
@@ -10,11 +10,11 @@
 - الحد الأدنى المعلن للبناء: WordPress `6.6` وPHP `8.1`.
 - Module Registry صغير، ووحدة `Foundation` فقط مسجلة حالياً.
 - Activation/deactivation متكرران بأمان، مع دعم التفعيل على Multisite وعدم حذف بيانات دائمة عند التعطيل.
-- Migration version foundation؛ الإصدار الحالي `1` يهيئ صلاحية الإدارة فقط ولا ينشئ أي جدول.
+- نظام Migrations بإصدار محفوظ في Option: الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات `{$wpdb->prefix}alb_relationships` بشكل idempotent عبر `dbDelta` وبدون Foreign Keys، مع مفتاح فريد لمنع التكرار وفهرس للبحث العكسي.
 - Capability واحدة محافظة باسم `manage_alborsa_platform` تضاف لدور `administrator`.
 - فحوص Availability غير ملزمة للإضافات السبع الموجودة، بدون استدعاء APIs تابعة لها وبدون Fatal errors عند غيابها.
 - فحصان داخل Site Health وأمر `wp alborsa health`.
-- PHPUnit وPHPCS وPHPStan وCI. لم يُعتمد بعد Harness تكامل WordPress حي داخل المستودع.
+- اختبارات PHPUnit معزولة وPHPCS وPHPStan وCI. لم يُعتمد بعد Harness تكامل WordPress حي داخل المستودع.
 
 ## أمر الفحص السريع
 
@@ -42,6 +42,7 @@ wp alborsa health
 - [خطة التنفيذ والـ Backlog](docs/03-implementation-plan.md)
 - [القرارات المفتوحة](docs/04-open-decisions.md)
 - [إضافات WordPress الموجودة ونقاط التكامل](docs/05-existing-wordpress-stack.md)
+- [سجل تقدم التنفيذ](docs/06-implementation-progress.md)
 
 ## إضافات WordPress الموجودة
 
@@ -57,18 +58,19 @@ wp alborsa health
 
 الإصدارات أعلاه Snapshot من الصورة وليست فحصاً مباشراً للخادم، ويجب إعادة التحقق منها عند بدء التنفيذ أو قبل أي تحديث.
 
-## حدود مرحلة Foundation الحالية
+## حدود مرحلة Foundation وبداية Phase 2
 
 المنفذ داخل النطاق:
 
 - تشغيل الإضافة، تسجيل الوحدات، Versioned migrations والصلاحيات الأساسية.
+- Migration الإصدار `2` لإنشاء جدول العلاقات `{$wpdb->prefix}alb_relationships` عبر `dbDelta`.
 - تشخيص Availability للتكاملات الحالية فقط؛ لا تُفحص الإصدارات والتراخيص والإعدادات تلقائياً.
 - Site Health وWP-CLI health command وبوابات الجودة.
 
 خارج النطاق مؤقتاً:
 
-- جميع وحدات المنتج: Editorial وAssets وMarket Data وBrokers وAffiliate وFinancial Tools وSEO وMultilingual integration.
-- أنواع المحتوى والتصنيفات وREST endpoints والجداول المخصصة.
+- وحدات المنتج التحريرية والتجارية: Editorial وAssets وMarket Data وBrokers وAffiliate وFinancial Tools وSEO وMultilingual integration.
+- أنواع المحتوى والتصنيفات وخدمات العلاقات وREST endpoints والجداول المخصصة الأخرى (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
 - مزودو البيانات والحسابات وWatchlists وAlerts.
 - الهوية البصرية.
 - القالب وملفات CSS.

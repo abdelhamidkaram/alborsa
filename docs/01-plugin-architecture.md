@@ -1,8 +1,8 @@
 # معمارية إضافة alborsa-platform
 
-> الحالة في 2026-09-16: نُفذت طبقة Foundation فقط. أسماء الواجهات والمسارات والجداول الخاصة بوحدات المنتج تظل مقترحات وليست وظائف موجودة حالياً.
+> الحالة في 2026-09-16: نُفذت طبقة Foundation، وبدأ تنفيذ المرحلة الثانية بإنشاء migration لجدول العلاقات `{$wpdb->prefix}alb_relationships` (مثال لموقع مفرد: `wp_alb_relationships`، إصدار Schema رقم 2). أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات وليست وظائف موجودة حالياً.
 
-## حالة تنفيذ Foundation
+## حالة تنفيذ Foundation وخطوة العلاقات
 
 المسار الحالي: `wp-content/plugins/alborsa-platform/`.
 
@@ -11,14 +11,14 @@
 - Namespace: `Alborsa\Platform` مع Composer PSR-4.
 - الحد الأدنى المعلن في Plugin header هو WordPress `6.6` وPHP `8.1`؛ لم يُنفذ بعد Compatibility smoke test على مصفوفة WordPress حية.
 - `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجل الآن هو `FoundationModule` فقط.
-- إصدار migration محفوظ في option باسم `alborsa_platform_db_version`، والإصدار الحالي `1` لا ينشئ جداول.
+- إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ الصلاحيات، والإصدار `2` ينشئ جدول العلاقات `{$wpdb->prefix}alb_relationships` عبر WordPress `dbDelta` بدون Foreign Keys ومع مفتاح فريد وفهرس للبحث العكسي.
 - قفل مؤقت باسم `alborsa_platform_migration_lock` يمنع تشغيل migration متزامنة، ويُحذف عند التعطيل بدون حذف الإصدار أو الصلاحيات.
 - Capability باسم `manage_alborsa_platform` تضاف إلى `administrator` فقط.
 - اختبارات Site Health بالمعرفين `alborsa_platform_dependencies` و`alborsa_platform_migrations`.
 - أمر WP-CLI: `wp alborsa health`، ويرجع خطأ عند نقص تكامل إنتاج مطلوب أو تأخر migration.
 - فحص Soft dependencies يعتمد على حالة التفعيل أو Runtime marker فقط. لا يعد فحصاً للإصدار أو الترخيص أو الإعداد أو صحة الخدمة.
 
-لم تُنشأ Types أو REST routes أو جداول أو Feature implementations لأي وحدة منتج.
+تم إنشاء تعريف migration لجدول العلاقات `alb_relationships` ضمن الإصدار 2، بينما لم تُسجل Post Types أو Taxonomies أو REST routes أو جداول ميزات أخرى بعد (قرار الروابط D-002 ما زال غير محسوم).
 
 ## 1. الهدف
 
