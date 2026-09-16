@@ -14,6 +14,7 @@ defined( 'ABSPATH' ) || exit;
 final class FoundationModule implements Module {
 	public function register(): void {
 		add_action( 'init', array( $this, 'initialize' ), 0 );
+		( new RewriteRules() )->register();
 	}
 
 	public function initialize(): void {

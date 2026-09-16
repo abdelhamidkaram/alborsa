@@ -11,6 +11,7 @@ namespace Alborsa\Platform\Tests\Unit\Foundation;
 
 use Alborsa\Platform\Foundation\FoundationModule;
 use Alborsa\Platform\Foundation\MigrationRunner;
+use Alborsa\Platform\Foundation\RewriteRules;
 use Alborsa\Platform\Tests\UnitTestCase;
 use Brain\Monkey\Functions;
 
@@ -22,6 +23,7 @@ final class FoundationModuleTest extends UnitTestCase {
 		$module->register();
 
 		self::assertSame( 0, has_action( 'init', FoundationModule::class . '->initialize()' ) );
+		self::assertSame( 999, has_action( 'init', RewriteRules::class . '->flush_if_outdated()' ) );
 	}
 
 	public function test_initialization_loads_translations_before_running_migrations(): void {

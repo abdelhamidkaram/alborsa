@@ -30,14 +30,14 @@ final class Activation {
 	private static function activate_current_site(): void {
 		$migration_error = MigrationRunner::from_configuration()->run();
 
-		if ( ! is_wp_error( $migration_error ) ) {
-			return;
+		if ( is_wp_error( $migration_error ) ) {
+			wp_die(
+				esc_html( $migration_error->get_error_message() ),
+				esc_html__( 'Alborsa Platform activation failed', 'alborsa-platform' ),
+				array( 'back_link' => true )
+			);
 		}
 
-		wp_die(
-			esc_html( $migration_error->get_error_message() ),
-			esc_html__( 'Alborsa Platform activation failed', 'alborsa-platform' ),
-			array( 'back_link' => true )
-		);
+		RewriteRules::schedule_flush();
 	}
 }

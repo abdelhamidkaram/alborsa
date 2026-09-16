@@ -1,17 +1,19 @@
 # alborsa.net — التخطيط التقني
 
-هذا المستودع مخصص لبناء منصة `alborsa.net` على WordPress. بدأ تنفيذ طبقة Foundation للإضافة، بينما تظل وحدات المنتج والتصميم عقوداً مخططة لم تبدأ بعد.
+هذا المستودع مخصص لبناء منصة `alborsa.net` على WordPress. نُفذت طبقة Foundation وبدأت وحدة Editorial، بينما تظل بقية وحدات المنتج والتصميم عقوداً مخططة أو قيد التنفيذ.
 
-> الحالة في 2026-09-16: نُفذت Foundation مع migration الإصدار 2 لجدول العلاقات `{$wpdb->prefix}alb_relationships` و`RelationshipRepository` داخلي صغير للقراءة والكتابة والحذف الدقيق تحت `wp-content/plugins/alborsa-platform`. لا توجد REST endpoints أو أنواع محتوى أو جداول مزايا أخرى أو واجهات Frontend حتى الآن. تبقى أسماء وحدات المنتج وعقودها الواردة في الوثائق مقترحات إلى أن تبدأ مراحلها.
+> الحالة في 2026-09-16: نُفذت Foundation مع migration الإصدار 2 لجدول العلاقات `{$wpdb->prefix}alb_relationships` و`RelationshipRepository` داخلي صغير. بدأت المرحلة الثانية بتسجيل `alb_analysis` و`alb_guide` داخل وحدة Editorial على المسارين `/tahleel/` و`/taleem/`. لا توجد مسارات REST مخصصة أو تصنيفات أو جداول مزايا أخرى أو واجهات Frontend حتى الآن.
 
 ## المنفذ حالياً
 
 - Plugin bootstrap مع Composer وPSR-4.
 - الحد الأدنى المعلن للبناء: WordPress `6.6` وPHP `8.1`.
-- Module Registry صغير، ووحدة `Foundation` فقط مسجلة حالياً.
+- Module Registry صغير، ووحدتا `Foundation` و`Editorial` مسجلتان حالياً.
 - Activation/deactivation متكرران بأمان، مع دعم التفعيل على Multisite وعدم حذف بيانات دائمة عند التعطيل.
 - نظام Migrations بإصدار محفوظ في Option: الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات `{$wpdb->prefix}alb_relationships` بشكل idempotent عبر `dbDelta` وبدون Foreign Keys، مع مفتاح فريد لمنع التكرار وفهرس للبحث العكسي.
 - `RelationshipRepository` داخلي فقط: يتحقق من المعرفات والمفاتيح قبل الإدخال، يكتب وقت UTC، ويقرأ بحسب المصدر أو الهدف بترتيب ثابت؛ لم يسجل Hook أو REST API أو Cache.
+- نوعا المحتوى العامان `alb_analysis` و`alb_guide` مع دعم محرر المكونات وREST القياسي والمراجعات، وبنيتي روابط `/tahleel/` و`/taleem/` المعتمدتين.
+- إصدار مستقل لقواعد إعادة الكتابة ينفذ Soft Flush مرة واحدة بعد تسجيل الوحدات، ولا ينفذ Flush في كل طلب.
 - Capability واحدة محافظة باسم `manage_alborsa_platform` تضاف لدور `administrator`.
 - فحوص Availability غير ملزمة للإضافات السبع الموجودة، بدون استدعاء APIs تابعة لها وبدون Fatal errors عند غيابها.
 - فحصان داخل Site Health وأمر `wp alborsa health`.
@@ -70,8 +72,8 @@ wp alborsa health
 
 خارج النطاق مؤقتاً:
 
-- وحدات المنتج التحريرية والتجارية: Editorial وAssets وMarket Data وBrokers وAffiliate وFinancial Tools وSEO وMultilingual integration.
-- أنواع المحتوى والتصنيفات وREST endpoints والجداول المخصصة الأخرى (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`)؛ خدمة العلاقات المنفذة داخلية فقط وغير مربوطة بعد بوحدة منتج.
+- وحدات المنتج المتبقية: Assets وMarket Data وBrokers وAffiliate وFinancial Tools وSEO وMultilingual integration، والأجزاء التحريرية غير المنفذة بعد.
+- أنواع المحتوى المتبقية والتصنيفات وREST endpoints المخصصة والجداول الأخرى (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`)؛ خدمة العلاقات المنفذة داخلية فقط وغير مربوطة بعد بوحدة منتج.
 - مزودو البيانات والحسابات وWatchlists وAlerts.
 - الهوية البصرية.
 - القالب وملفات CSS.

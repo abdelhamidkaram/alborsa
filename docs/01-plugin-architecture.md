@@ -1,6 +1,6 @@
 # معمارية إضافة alborsa-platform
 
-> الحالة في 2026-09-16: نُفذت طبقة Foundation، وبدأ تنفيذ المرحلة الثانية بإنشاء migration لجدول العلاقات `{$wpdb->prefix}alb_relationships` (مثال لموقع مفرد: `wp_alb_relationships`، إصدار Schema رقم 2) وRepository داخلي صغير له. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات وليست وظائف موجودة حالياً.
+> الحالة في 2026-09-16: نُفذت طبقة Foundation، وبدأ تنفيذ المرحلة الثانية بجدول العلاقات وRepository داخلي، ثم تسجيل نوعي المحتوى `alb_analysis` و`alb_guide` داخل وحدة Editorial. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
 
 ## حالة تنفيذ Foundation وخطوة العلاقات
 
@@ -10,16 +10,18 @@
 
 - Namespace: `Alborsa\Platform` مع Composer PSR-4.
 - الحد الأدنى المعلن في Plugin header هو WordPress `6.6` وPHP `8.1`؛ لم يُنفذ بعد Compatibility smoke test على مصفوفة WordPress حية.
-- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجل الآن هو `FoundationModule` فقط.
+- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلان الآن هما `FoundationModule` و`EditorialModule`.
 - إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ الصلاحيات، والإصدار `2` ينشئ جدول العلاقات `{$wpdb->prefix}alb_relationships` عبر WordPress `dbDelta` بدون Foreign Keys ومع مفتاح فريد وفهرس للبحث العكسي.
 - `Shared\\Relationships\\RelationshipRepository` خدمة داخلية غير مسجلة في Module Registry: تضيف وتحذف هوية علاقة دقيقة، وتقرأ المصدر أو الهدف بترتيب `sort_order, id`. لا تحتوي على Hooks أو REST أو Cache أو فحص وجود الكائنات.
+- `EditorialModule` يسجل `alb_analysis` و`alb_guide` كنوعي محتوى عامين مع REST القياسي والمراجعات، على `/tahleel/` و`/taleem/`.
+- `RewriteRules` يؤخر Soft Flush إلى أولوية `999` من `init` وينفذه مرة واحدة بحسب إصدار مستقل، حتى تكون كل قواعد الوحدات مسجلة أولاً.
 - قفل مؤقت باسم `alborsa_platform_migration_lock` يمنع تشغيل migration متزامنة، ويُحذف عند التعطيل بدون حذف الإصدار أو الصلاحيات.
 - Capability باسم `manage_alborsa_platform` تضاف إلى `administrator` فقط.
 - اختبارات Site Health بالمعرفين `alborsa_platform_dependencies` و`alborsa_platform_migrations`.
 - أمر WP-CLI: `wp alborsa health`، ويرجع خطأ عند نقص تكامل إنتاج مطلوب أو تأخر migration.
 - فحص Soft dependencies يعتمد على حالة التفعيل أو Runtime marker فقط. لا يعد فحصاً للإصدار أو الترخيص أو الإعداد أو صحة الخدمة.
 
-تم إنشاء تعريف migration لجدول العلاقات `alb_relationships` ضمن الإصدار 2، ونُفذت طبقة Repository داخلية محدودة له. اعتمد القرار D-002 العربية على `/` والإنجليزية تحت `/en/`، لكن لم تُسجل Post Types أو Taxonomies أو REST routes أو جداول ميزات أخرى بعد.
+تم إنشاء تعريف migration لجدول العلاقات `alb_relationships` ضمن الإصدار 2، ونُفذت طبقة Repository داخلية محدودة له. اعتمد القرار D-002 العربية على `/` والإنجليزية تحت `/en/`، وسُجل نوعا التحليل والدليل؛ لم تُسجل Taxonomies أو REST routes مخصصة أو جداول ميزات أخرى بعد.
 
 ## 1. الهدف
 
