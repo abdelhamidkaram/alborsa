@@ -13,6 +13,7 @@ define( 'ALBORSA_PLATFORM_PATH', dirname( __DIR__ ) . '/' );
 
 require_once ALBORSA_PLATFORM_PATH . 'vendor/autoload.php';
 require_once __DIR__ . '/Support/WPErrorDouble.php';
+require_once __DIR__ . '/Support/WPCommentDouble.php';
 require_once __DIR__ . '/Support/WPPostDouble.php';
 require_once __DIR__ . '/Support/WPRestRequestDouble.php';
 require_once __DIR__ . '/Support/WPRestResponseDouble.php';

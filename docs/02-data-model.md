@@ -19,7 +19,7 @@
 | دليل تعليمي | `alb_guide` | الدروس والمسارات التعليمية | MVP — منفذ |
 | مصطلح | `alb_glossary` | المسرد العربي/الإنجليزي | MVP/P1 |
 | أصل مالي | `alb_asset` | الأسهم والمؤشرات والفوركس والسلع والكريبتو | MVP — منفذ |
-| وسيط | `alb_broker` | الملف والمراجعة التحريرية | MVP |
+| وسيط | `alb_broker` | الملف والمراجعة التحريرية | منفذ للملف؛ منهجية التقييم معلقة |
 | مقارنة تحريرية | `alb_compare` | صفحات مقارنة أو «أفضل الوسطاء» القابلة للفهرسة | MVP/P1 |
 | اكتتاب | `alb_ipo` | الاكتتابات القادمة والسابقة | P1 |
 
@@ -86,16 +86,18 @@
 
 ### الهوية والعرض
 
-- الاسم القانوني والاسم التجاري.
-- الموقع والنطاقات المسموح بتحويل الأفلييت إليها.
-- أنواع الخدمات.
-- الدول المستهدفة.
-- المنصات.
-- العملات وطرق الإيداع والسحب.
-- دعم اللغة العربية.
-- الحد الأدنى للإيداع.
-- أنواع الحسابات.
-- ملخص الرسوم.
+حالة التنفيذ: `alb_broker` و`alb_broker_type` و`alb_jurisdiction` والحقول التالية منفذة. الحقول المحايدة تنسخ عبر `wpml-config.xml`، بينما ملخص الرسوم والمزايا والعيوب تبقى قابلة للترجمة.
+
+- الاسم التجاري: عنوان `alb_broker`، والاسم القانوني: `alb_broker_legal_name`.
+- الموقع: `alb_broker_official_website`. نطاقات الأفلييت غير منفذة قبل D-005.
+- الخدمات: `alb_broker_services`.
+- الدول المستهدفة والاختصاصات: Terms من `alb_jurisdiction`.
+- المنصات: `alb_broker_platforms`.
+- العملات وطرق الإيداع والسحب: `alb_broker_currencies` و`alb_broker_deposit_methods`.
+- دعم اللغة العربية: `alb_broker_arabic_support`.
+- الحد الأدنى وعملته: `alb_broker_minimum_deposit` و`alb_broker_deposit_currency`.
+- أنواع الحسابات: `alb_broker_account_types`.
+- ملخص الرسوم والمزايا والعيوب: `alb_broker_fee_summary` و`alb_broker_pros` و`alb_broker_cons`.
 
 ### التراخيص
 
@@ -109,6 +111,8 @@
 - رابط المصدر الرسمي.
 - تاريخ آخر تحقق.
 - ملاحظات داخلية لا تظهر للزائر.
+
+تحفظ القائمة في `_alb_broker_licenses` المحمي. لا يعيد REST إلا السجلات ذات `verification_status=verified` وبها `regulator` و`license_number` و`source_url` و`verified_at` مكتملة. لا يخرج `internal_notes` في أي تمثيل عام.
 
 ### التقييم التحريري
 
@@ -130,22 +134,23 @@
 
 تستخدم WordPress Comments مع `comment_type = alb_broker_review` في الـMVP.
 
-Comment meta:
+Comment meta المنفذة بأسماء محمية ذات بادئة لتجنب التعارض مع إضافات التعليقات الأخرى:
 
-- `rating`
-- `verification_status`: unverified، email_verified، manually_verified، rejected
-- `experience_type`
-- `experience_date`
-- `moderation_note` — إداري فقط
-- `consent_version`
+- `_alb_broker_review_rating`
+- `_alb_broker_review_verification_status`: unverified، email_verified، manually_verified، rejected
+- `_alb_broker_review_experience_type`
+- `_alb_broker_review_experience_date`
+- `_alb_broker_review_moderation_note` — إداري فقط
+- `_alb_broker_review_consent_version`
 
 قواعدها:
 
 - كل مراجعة تبدأ Pending.
 - التحقق من البريد لا يعني التحقق من أن المستخدم عميل حقيقي.
-- عبارة «مراجعة موثقة» لا تظهر إلا للحالة `manually_verified` وفق سياسة معلنة.
+- عبارة «مراجعة موثقة» لا تظهر حالياً حتى للحالة `manually_verified`؛ تظل `verified=false` إلى أن تعتمد سياسة D-003.
 - متوسط المستخدمين يحسب من الحالات المقبولة فقط.
 - التقييم التحريري ومتوسط المستخدمين لا يدمجان في رقم واحد.
+- لا يوجد مسار إدخال عام حالياً بسبب D-013؛ التخزين والقراءة المعتدلة منفذان فقط.
 
 ## 7. العلاقات
 

@@ -11,6 +11,7 @@ namespace Alborsa\Platform\Tests\Unit\Modules;
 
 use Alborsa\Platform\Foundation\FoundationModule;
 use Alborsa\Platform\Modules\Assets\AssetsModule;
+use Alborsa\Platform\Modules\Brokers\BrokersModule;
 use Alborsa\Platform\Modules\Editorial\EditorialModule;
 use Alborsa\Platform\Modules\MarketData\MarketDataModule;
 use Alborsa\Platform\Tests\UnitTestCase;
@@ -19,10 +20,11 @@ final class ModuleConfigurationTest extends UnitTestCase {
 	public function test_configuration_wires_product_modules_after_foundation(): void {
 		$modules = require ALBORSA_PLATFORM_PATH . 'config/modules.php';
 
-		self::assertCount( 4, $modules );
+		self::assertCount( 5, $modules );
 		self::assertInstanceOf( FoundationModule::class, $modules[0] );
 		self::assertInstanceOf( EditorialModule::class, $modules[1] );
 		self::assertInstanceOf( AssetsModule::class, $modules[2] );
 		self::assertInstanceOf( MarketDataModule::class, $modules[3] );
+		self::assertInstanceOf( BrokersModule::class, $modules[4] );
 	}
 }

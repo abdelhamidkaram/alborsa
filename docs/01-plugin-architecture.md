@@ -10,7 +10,7 @@
 
 - Namespace: `Alborsa\Platform` مع Composer PSR-4.
 - الحد الأدنى المعلن في Plugin header هو WordPress `6.6` وPHP `8.1`؛ لم يُنفذ بعد Compatibility smoke test على مصفوفة WordPress حية.
-- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule` و`MarketDataModule`.
+- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule` و`MarketDataModule` و`BrokersModule`.
 - إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات، والإصدار `3` يثبت قدرات `alb_content`، والإصدار `4` ينشئ جدول أحدث الأسعار.
 - `Shared\\Relationships\\RelationshipRepository` خدمة داخلية غير مسجلة في Module Registry: تضيف وتحذف هوية علاقة دقيقة، وتقرأ المصدر أو الهدف بترتيب `sort_order, id`. لا تحتوي على Hooks أو REST أو Cache أو فحص وجود الكائنات.
 - `Shared\\Relationships\\ContentAssetRelationshipService` يضيف طبقة المنتج فوق Repository: يستقبل كائنات `WP_Post`، يقصر المصادر على الخبر والتحليل والدليل، والهدف على الأصل، وأنواع العلاقة على `mentions` و`analyzes`. لا يسجل Hook أو REST write route أو واجهة Admin.
@@ -206,6 +206,10 @@ flowchart LR
 
 التقييم التحريري منفصل دائماً عن متوسط تقييم المستخدمين.
 
+التنفيذ الحالي يسجل `alb_broker` على المسار المعتمد `/brokers/{slug}/` مع تصنيفي النوع والاختصاص القضائي وحقول Meta منظمة وشاشة إدارة للتراخيص. اشتراطات الشارة التنظيمية تنفذ في `BrokerPresenter`: حالة verified وحدها لا تكفي، بل يلزم اسم الجهة ورقم الترخيص ورابط المصدر الرسمي وتاريخ التحقق. لا تظهر الملاحظات الداخلية.
+
+تعيد واجهات القراءة القائمة والتفاصيل والمقارنة حتى ثلاثة وسطاء. التقييم التحريري يعيد حالة `methodology_pending` ورقماً فارغاً لأن D-004 مفتوح. مراجعات `alb_broker_review` المقبولة وغير المرفوضة فقط تدخل المتوسط، لكن `verified=false` ثابت مؤقتاً ولا يوجد POST عام قبل اعتماد D-003 وD-013.
+
 ### 4.6 Affiliate
 
 مسؤوليتها:
@@ -288,12 +292,15 @@ GET  /wp-json/alborsa/v1/assets
 GET  /wp-json/alborsa/v1/assets/{id}
 GET  /wp-json/alborsa/v1/assets/{id}/quote
 GET  /wp-json/alborsa/v1/brokers
+GET  /wp-json/alborsa/v1/brokers/{id}
 GET  /wp-json/alborsa/v1/brokers/compare?ids=1,2,3
 POST /wp-json/alborsa/v1/brokers/{id}/reviews
 GET  /go/{affiliate-slug}
 ```
 
 لا يُسمح للـREST API بإرجاع مفاتيح مزودين أو روابط داخلية حساسة أو بيانات تحقق خاصة بالمراجعين.
+
+مسارات GET الثلاثة للوسطاء منفذة. مسار POST للمراجعات أعلاه ما زال عقداً مستهدفاً وغير مسجل؛ لا يفتح قبل اعتماد سياسة التحقق وحماية Spam. المقارنة ترفض أقل من معرفين أو أكثر من ثلاثة أو أي معرف غير رقمي، وتعيد الوسطاء المنشورين فقط.
 
 عقد `GET /assets` الحالي يعيد `items` و`pagination`، ويقبل `page` و`per_page` و`search` و`asset_type` و`exchange`. يعيد `GET /assets/{id}` نفس الحقول العامة مع المحتوى وقائمة `related_content` المنشورة. تستخدم الاستعلامات `suppress_filters=false` حتى تطبق Polylang لغة طلب WordPress الحالية، ويلزم التحقق من ذلك على Staging.
 

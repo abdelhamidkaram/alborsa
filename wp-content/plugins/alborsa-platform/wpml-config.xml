@@ -8,11 +8,23 @@
 		<custom-field action="copy">alb_official_website</custom-field>
 		<custom-field action="copy">alb_listing_status</custom-field>
 		<custom-field action="copy">_alb_provider_mappings</custom-field>
+		<custom-field action="copy">alb_broker_legal_name</custom-field>
+		<custom-field action="copy">alb_broker_official_website</custom-field>
+		<custom-field action="copy">alb_broker_services</custom-field>
+		<custom-field action="copy">alb_broker_platforms</custom-field>
+		<custom-field action="copy">alb_broker_currencies</custom-field>
+		<custom-field action="copy">alb_broker_deposit_methods</custom-field>
+		<custom-field action="copy">alb_broker_arabic_support</custom-field>
+		<custom-field action="copy">alb_broker_minimum_deposit</custom-field>
+		<custom-field action="copy">alb_broker_deposit_currency</custom-field>
+		<custom-field action="copy">alb_broker_account_types</custom-field>
+		<custom-field action="copy">_alb_broker_licenses</custom-field>
 	</custom-fields>
 	<custom-types>
 		<custom-type translate="1">alb_analysis</custom-type>
 		<custom-type translate="1">alb_guide</custom-type>
 		<custom-type translate="1">alb_asset</custom-type>
+		<custom-type translate="1">alb_broker</custom-type>
 	</custom-types>
 	<taxonomies>
 		<taxonomy translate="1">alb_topic</taxonomy>
@@ -21,5 +33,7 @@
 		<taxonomy translate="1">alb_asset_type</taxonomy>
 		<taxonomy translate="1">alb_exchange</taxonomy>
 		<taxonomy translate="1">alb_sector</taxonomy>
+		<taxonomy translate="1">alb_broker_type</taxonomy>
+		<taxonomy translate="1">alb_jurisdiction</taxonomy>
 	</taxonomies>
 </wpml-config>
