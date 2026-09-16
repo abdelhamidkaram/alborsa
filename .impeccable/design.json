@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-16T00:00:00+03:00",
+  "title": "Design System: alborsa.net",
+  "extensions": {
+    "colorMeta": {
+      "midnight-market": {
+        "role": "primary",
+        "displayName": "كحلي السوق",
+        "canonical": "#0A1628",
+        "tonalRamp": ["oklch(15% 0.035 253)", "oklch(24% 0.04 253)", "oklch(34% 0.045 253)", "oklch(45% 0.05 253)", "oklch(58% 0.04 253)", "oklch(72% 0.028 253)", "oklch(86% 0.014 253)", "oklch(96% 0.006 253)"]
+      },
+      "tadawul-gold": {
+        "role": "secondary",
+        "displayName": "ذهبي تداول",
+        "canonical": "#C9A84C",
+        "tonalRamp": ["oklch(18% 0.035 85)", "oklch(28% 0.055 85)", "oklch(40% 0.075 85)", "oklch(55% 0.095 85)", "oklch(70% 0.11 85)", "oklch(80% 0.085 85)", "oklch(89% 0.045 85)", "oklch(96% 0.015 85)"]
+      },
+      "data-teal": {
+        "role": "tertiary",
+        "displayName": "تيل البيانات",
+        "canonical": "#0D7377",
+        "tonalRamp": ["oklch(16% 0.035 196)", "oklch(26% 0.06 196)", "oklch(38% 0.075 196)", "oklch(50% 0.085 196)", "oklch(62% 0.075 196)", "oklch(74% 0.055 196)", "oklch(87% 0.025 196)", "oklch(96% 0.009 196)"]
+      },
+      "cool-surface": {
+        "role": "neutral",
+        "displayName": "سطح بارد",
+        "canonical": "#F2F5FA",
+        "tonalRamp": ["oklch(18% 0.018 253)", "oklch(29% 0.016 253)", "oklch(42% 0.014 253)", "oklch(55% 0.012 253)", "oklch(68% 0.01 253)", "oklch(79% 0.008 253)", "oklch(89% 0.006 253)", "oklch(97% 0.004 253)"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "عرض عربي",
+        "purpose": "رسالة الصفحة والعنوان التحريري المهيمن فقط."
+      },
+      "body": {
+        "displayName": "نص القراءة",
+        "purpose": "المقالات والواجهات العربية طويلة القراءة."
+      }
+    },
+    "shadows": [
+      {
+        "name": "interactive-low",
+        "value": "0 4px 8px rgba(10, 22, 40, 0.12)",
+        "purpose": "قائمة أو سطح ارتفع فعلياً أثناء التفاعل."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-decisive",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "فتح القائمة وحالات التركيز والتنقل."
+      }
+    ],
+    "breakpoints": [
+      {"name": "content", "value": "640px"},
+      {"name": "navigation", "value": "900px"},
+      {"name": "wide", "value": "1180px"}
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "إجراء أساسي ذهبي مضبوط.",
+      "html": "<button class=\"ds-btn-primary\">اقرأ موجز اليوم</button>",
+      "css": ".ds-btn-primary{min-height:44px;border:0;border-radius:8px;background:#C9A84C;color:#0A1628;padding:12px 20px;font:700 14px/1.5 Tahoma,sans-serif;transition:background-color 180ms cubic-bezier(.22,1,.36,1),transform 180ms cubic-bezier(.22,1,.36,1)}.ds-btn-primary:hover{background:#D4B75E;transform:translateY(-1px)}.ds-btn-primary:focus-visible{outline:3px solid rgba(13,115,119,.35);outline-offset:3px}"
+    },
+    {
+      "name": "Market Status",
+      "kind": "custom",
+      "refersTo": "data-surface",
+      "description": "حالة سوق نصية بلا أرقام وهمية.",
+      "html": "<div class=\"ds-market-status\"><strong>تداول السعودية</strong><span><i></i> البيانات غير متاحة حالياً</span></div>",
+      "css": ".ds-market-status{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#122040;color:#fff;border-radius:12px;padding:16px 20px;font:700 14px/1.5 Tahoma,sans-serif}.ds-market-status span{color:#C9D4E3;font-weight:400}.ds-market-status i{display:inline-block;width:7px;height:7px;margin-inline-end:7px;border-radius:50%;background:#9CAABD}"
+    },
+    {
+      "name": "Content Surface",
+      "kind": "card",
+      "refersTo": "content-surface",
+      "description": "سطح تحريري مسطح يفصل بالمحيط والمساحة.",
+      "html": "<article class=\"ds-content-surface\"><small>تحت المجهر</small><h3>قراءة أعمق لما يحرك السوق</h3><p>تحليل واضح يشرح السياق والمصدر وحدود المعلومة.</p></article>",
+      "css": ".ds-content-surface{max-width:420px;border:1px solid #D7DFE9;border-radius:12px;background:#fff;color:#16243A;padding:24px;font-family:Tahoma,sans-serif}.ds-content-surface small{color:#0D7377;font-weight:700}.ds-content-surface h3{margin:8px 0;font-size:22px;line-height:1.4}.ds-content-surface p{margin:0;color:#4E5E72;line-height:1.8}"
+    },
+    {
+      "name": "Newsletter Field",
+      "kind": "input",
+      "refersTo": "content-surface",
+      "description": "حقل اشتراك واضح بتسمية ثابتة.",
+      "html": "<label class=\"ds-field\"><span>البريد الإلكتروني</span><input type=\"email\" placeholder=\"name@example.com\"></label>",
+      "css": ".ds-field{display:grid;gap:8px;color:#16243A;font:700 14px/1.5 Tahoma,sans-serif}.ds-field input{min-height:48px;border:1px solid #AAB7C7;border-radius:8px;background:#fff;color:#16243A;padding:10px 14px;font:400 16px/1.5 Tahoma,sans-serif}.ds-field input:focus{border-color:#0D7377;outline:3px solid rgba(13,115,119,.25);outline-offset:2px}"
+    },
+    {
+      "name": "Primary Navigation",
+      "kind": "nav",
+      "refersTo": "data-surface",
+      "description": "تنقل كحلي نشط بخط ذهبي.",
+      "html": "<nav class=\"ds-nav\"><a class=\"is-active\" href=\"#\">الرئيسية</a><a href=\"#\">الأسواق</a><a href=\"#\">الأخبار</a><a href=\"#\">التعليم</a></nav>",
+      "css": ".ds-nav{display:flex;gap:24px;background:#0A1628;padding:14px 20px;font:700 14px/1.5 Tahoma,sans-serif}.ds-nav a{min-height:44px;display:inline-flex;align-items:center;border-bottom:2px solid transparent;color:#E8EDF5;text-decoration:none}.ds-nav a:hover,.ds-nav a:focus-visible{color:#fff}.ds-nav a:focus-visible{outline:3px solid rgba(13,115,119,.45);outline-offset:3px}.ds-nav a.is-active{border-bottom-color:#C9A84C;color:#C9A84C}"
+    }
+  ],
+  "narrative": {
+    "northStar": "غرفة الإشارة",
+    "overview": "غرفة أخبار مالية خليجية هادئة؛ تصل المعلومة الأهم أولاً، ثم مصدرها وتوقيتها وحالتها. المجال التحريري الداكن ينتقل إلى سطح فاتح منظم من دون تقليد شاشة تداول أو مجلة فاخرة.",
+    "keyCharacteristics": [
+      "RTL أولاً باستخدام الخصائص المنطقية.",
+      "كثافة منظمة بخطوط ومساحات لا ببطاقات متطابقة.",
+      "الجوال يعيد ترتيب الأولويات.",
+      "كل بيانات السوق تظهر معها حالة واضحة."
+    ],
+    "rules": [
+      {"name": "The Status Rule", "body": "اللون لا ينقل حالة السوق منفرداً.", "section": "colors"},
+      {"name": "The Gold Budget Rule", "body": "الذهب لنقاط القرار فقط.", "section": "colors"},
+      {"name": "The One Display Rule", "body": "عنوان Display واحد في الشاشة الأولى.", "section": "typography"},
+      {"name": "The Flat-by-Default Rule", "body": "الارتفاع نتيجة حالة أو طبقة حقيقية فقط.", "section": "elevation"}
+    ],
+    "dos": [
+      "Do استخدم WordPress وPolylang لبناء الروابط.",
+      "Do اعرض المصدر ووقت التحديث وحالة البيانات.",
+      "Do اجعل كل تحكم قابلاً للوحة المفاتيح."
+    ],
+    "donts": [
+      "Don't تبنِ واجهة مالية قديمة ومزدحمة.",
+      "Don't تستخدم تنقلاً معقداً وبطيئاً على الجوال.",
+      "Don't تستخدم النيون أو الوعود الربحية.",
+      "Don't تصف بيانات السوق بأنها لحظية قبل اعتماد المزود."
+    ]
+  }
+}
