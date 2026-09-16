@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 
 final class RewriteRules {
 	public const VERSION_OPTION  = 'alborsa_platform_rewrite_version';
-	public const CURRENT_VERSION = 1;
+	public const CURRENT_VERSION = 2;
 
 	public function register(): void {
 		add_action( 'init', array( $this, 'flush_if_outdated' ), 999 );

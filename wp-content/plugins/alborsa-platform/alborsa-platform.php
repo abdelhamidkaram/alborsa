@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Alborsa Platform
  * Plugin URI:        https://alborsa.net/
- * Description:       Product foundation and editorial content types for alborsa.net. Run: wp alborsa health.
+ * Description:       Product foundation, editorial content, and asset registry for alborsa.net. Run: wp alborsa health.
  * Version:           0.1.0
  * Requires at least: 6.6
  * Requires PHP:      8.1

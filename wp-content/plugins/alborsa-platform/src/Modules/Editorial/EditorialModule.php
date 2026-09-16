@@ -14,8 +14,11 @@ use Alborsa\Platform\Foundation\Module;
 defined( 'ABSPATH' ) || exit;
 
 final class EditorialModule implements Module {
-	public const ANALYSIS_POST_TYPE = 'alb_analysis';
-	public const GUIDE_POST_TYPE    = 'alb_guide';
+	public const ANALYSIS_POST_TYPE   = 'alb_analysis';
+	public const GUIDE_POST_TYPE      = 'alb_guide';
+	public const TOPIC_TAXONOMY       = 'alb_topic';
+	public const GUIDE_LEVEL_TAXONOMY = 'alb_guide_level';
+	public const GUIDE_TRACK_TAXONOMY = 'alb_guide_track';
 
 	public function register(): void {
 		add_action( 'init', array( $this, 'initialize' ) );
@@ -23,6 +26,7 @@ final class EditorialModule implements Module {
 
 	public function initialize(): void {
 		$this->register_post_types();
+		$this->register_taxonomies();
 	}
 
 	public function register_post_types(): void {
@@ -34,6 +38,26 @@ final class EditorialModule implements Module {
 		register_post_type(
 			self::GUIDE_POST_TYPE,
 			$this->post_type_arguments( 'taleem', $this->guide_labels() )
+		);
+	}
+
+	public function register_taxonomies(): void {
+		register_taxonomy(
+			self::TOPIC_TAXONOMY,
+			array( 'post', self::ANALYSIS_POST_TYPE, self::GUIDE_POST_TYPE ),
+			$this->taxonomy_arguments( $this->topic_labels() )
+		);
+
+		register_taxonomy(
+			self::GUIDE_LEVEL_TAXONOMY,
+			array( self::GUIDE_POST_TYPE ),
+			$this->taxonomy_arguments( $this->guide_level_labels() )
+		);
+
+		register_taxonomy(
+			self::GUIDE_TRACK_TAXONOMY,
+			array( self::GUIDE_POST_TYPE ),
+			$this->taxonomy_arguments( $this->guide_track_labels() )
 		);
 	}
 
@@ -56,6 +80,27 @@ final class EditorialModule implements Module {
 			'hierarchical'    => false,
 			'capability_type' => 'post',
 			'map_meta_cap'    => true,
+		);
+	}
+
+	/**
+	 * Taxonomy archives stay disabled until their public URL contracts are approved.
+	 *
+	 * @param array<string, string> $labels Taxonomy labels.
+	 * @return array<string, mixed>
+	 */
+	private function taxonomy_arguments( array $labels ): array {
+		return array(
+			'labels'             => $labels,
+			'public'             => true,
+			'publicly_queryable' => false,
+			'show_ui'            => true,
+			'show_in_rest'       => true,
+			'show_admin_column'  => true,
+			'show_in_nav_menus'  => false,
+			'hierarchical'       => true,
+			'query_var'          => false,
+			'rewrite'            => false,
 		);
 	}
 
@@ -140,6 +185,57 @@ final class EditorialModule implements Module {
 			'item_updated'             => __( 'Guide updated.', 'alborsa-platform' ),
 			'item_link'                => __( 'Guide Link', 'alborsa-platform' ),
 			'item_link_description'    => __( 'A link to a guide.', 'alborsa-platform' ),
+		);
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	private function topic_labels(): array {
+		return array(
+			'name'          => __( 'Topics', 'alborsa-platform' ),
+			'singular_name' => __( 'Topic', 'alborsa-platform' ),
+			'search_items'  => __( 'Search Topics', 'alborsa-platform' ),
+			'all_items'     => __( 'All Topics', 'alborsa-platform' ),
+			'edit_item'     => __( 'Edit Topic', 'alborsa-platform' ),
+			'update_item'   => __( 'Update Topic', 'alborsa-platform' ),
+			'add_new_item'  => __( 'Add New Topic', 'alborsa-platform' ),
+			'new_item_name' => __( 'New Topic Name', 'alborsa-platform' ),
+			'menu_name'     => __( 'Topics', 'alborsa-platform' ),
+		);
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	private function guide_level_labels(): array {
+		return array(
+			'name'          => __( 'Guide Levels', 'alborsa-platform' ),
+			'singular_name' => __( 'Guide Level', 'alborsa-platform' ),
+			'search_items'  => __( 'Search Guide Levels', 'alborsa-platform' ),
+			'all_items'     => __( 'All Guide Levels', 'alborsa-platform' ),
+			'edit_item'     => __( 'Edit Guide Level', 'alborsa-platform' ),
+			'update_item'   => __( 'Update Guide Level', 'alborsa-platform' ),
+			'add_new_item'  => __( 'Add New Guide Level', 'alborsa-platform' ),
+			'new_item_name' => __( 'New Guide Level Name', 'alborsa-platform' ),
+			'menu_name'     => __( 'Guide Levels', 'alborsa-platform' ),
+		);
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	private function guide_track_labels(): array {
+		return array(
+			'name'          => __( 'Guide Tracks', 'alborsa-platform' ),
+			'singular_name' => __( 'Guide Track', 'alborsa-platform' ),
+			'search_items'  => __( 'Search Guide Tracks', 'alborsa-platform' ),
+			'all_items'     => __( 'All Guide Tracks', 'alborsa-platform' ),
+			'edit_item'     => __( 'Edit Guide Track', 'alborsa-platform' ),
+			'update_item'   => __( 'Update Guide Track', 'alborsa-platform' ),
+			'add_new_item'  => __( 'Add New Guide Track', 'alborsa-platform' ),
+			'new_item_name' => __( 'New Guide Track Name', 'alborsa-platform' ),
+			'menu_name'     => __( 'Guide Tracks', 'alborsa-platform' ),
 		);
 	}
 }
