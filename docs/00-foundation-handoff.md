@@ -5,7 +5,7 @@
 ## Current state
 
 - The plugin lives at `wp-content/plugins/alborsa-platform`.
-- The `Foundation`, `Editorial`, `Assets`, `MarketData`, and `Brokers` modules are wired. Editorial registers the public `alb_analysis` and `alb_guide` post types with the approved `/tahleel/` and `/taleem/` rewrite bases. Assets registers `alb_asset` without a generic archive.
+- The `Foundation`, `Editorial`, `Assets`, `MarketData`, `Brokers`, and `FinancialTools` modules are wired. Editorial registers the public `alb_analysis` and `alb_guide` post types with the approved `/tahleel/` and `/taleem/` rewrite bases. Assets registers `alb_asset` without a generic archive.
 - Six taxonomies are registered with admin and core REST support: `alb_topic`, `alb_guide_level`, `alb_guide_track`, `alb_asset_type`, `alb_exchange`, and `alb_sector`. Their public archives and rewrite rules remain disabled until URL contracts are approved.
 - Asset singles use the approved `/aswaq/tadawul/{symbol}/` route for assets classified as `stock` on the `tadawul` exchange and `/forex/{pair}/` for assets classified as `forex`. Route queries enforce those classifications to prevent duplicate cross-route URLs; other asset classes keep WordPress query permalinks until their routes are approved.
 - `AssetMeta` registers six public, single-value fields (`alb_canonical_symbol`, `alb_base_currency`, `alb_quote_currency`, `alb_isin`, `alb_official_website`, `alb_listing_status`) with sanitizers and per-post edit authorization. The structured `_alb_provider_mappings` field is protected and excluded from core REST responses.
@@ -25,6 +25,7 @@
 - `BrokerMeta` provides structured public profile fields and protected license records. `BrokerAdminMetaBox` saves them with nonce and capability checks. A license reaches the public presenter only when it has verified status, regulator, license number, official source URL, and verification date; internal notes never leave the protected record.
 - Public broker reading is available at `GET /wp-json/alborsa/v1/brokers`, `GET /wp-json/alborsa/v1/brokers/{id}`, and `GET /wp-json/alborsa/v1/brokers/compare?ids=1,2`. Comparisons require two or three unique published broker IDs.
 - Moderated reviews use WordPress comments with `comment_type=alb_broker_review` and prefixed protected comment meta. Only approved, non-rejected reviews contribute to the public list and average. Public submission and verified-review badges remain disabled while D-003 and D-013 are open; editorial scores remain null with `methodology_pending` while D-004 is open.
+- `FinancialToolsModule` exposes a public catalog and stateless calculation route. Profit/loss, position size, pip value, and monthly compound-growth estimates are implemented as pure services with bounded string inputs, explicit assumptions, no persistence, and unit coverage. Zakat remains unavailable under D-006 and currency conversion remains unavailable under D-008.
 - The migration uses the current site table prefix and the existing network activation lifecycle, while real WordPress/MySQL table creation and network activation across multiple blogs remain unverified integration boundaries.
 - Soft checks cover the seven existing WordPress plugins.
 - Site Health reports migration, dependency, and market-provider state. `wp alborsa health` remains the Foundation migration/dependency command.
@@ -32,11 +33,11 @@
 - Isolated unit tests verify schema SQL definition and migration lifecycle orchestration.
 - Quality checks run with `composer quality` from the plugin directory.
 - A standalone custom theme now lives at `wp-content/themes/alborsa`. It implements the approved RTL-first Editorial Signal design system, responsive site chrome, the complete homepage composition, news/analysis/education archives, markets/brokers/tools landing pages, editorial and asset singles, search, and 404 states.
-- The theme reads only published WordPress content and the documented public asset identity fields. It does not read the quote table or provider mappings, make frontend market requests, manufacture prices, activate broker CTAs, or expose calculator forms before their plugin services are implemented.
+- The theme reads only published WordPress content and the documented public asset identity fields. It does not read the quote table or provider mappings, manufacture prices, or activate broker CTAs. Calculator services now exist, but their theme forms remain an integration task.
 
 ## Not implemented
 
-- Other product modules, remaining custom post types and taxonomies, editorial workflow/statuses and metadata, remaining custom REST routes, or remaining feature tables (`alb_affiliate_links`, `alb_affiliate_clicks`).
+- Remaining product modules, custom post types and taxonomies, editorial workflow/statuses and metadata, remaining custom REST routes, or remaining feature tables (`alb_affiliate_links`, `alb_affiliate_clicks`).
 - `RelationshipRepository` persists, deletes, and reads exact relationships with a 100-row read cap. `ContentAssetRelationshipService` validates `WP_Post` object roles and allows `mentions`/`analyzes` links from posts, analyses, and guides to assets; it has no admin UI or REST write route yet. D-002 approves Arabic on `/` and English under `/en/`; remaining product entity registration, write routes, caching, and administrative/data-service integration remain unimplemented.
 - Real market providers, retry/backoff policy, user accounts, watchlists, or alerts. The complete provider-neutral quote runtime is implemented, but no external adapter is selected and no server cron entry is installed while D-001 remains open.
 - Broker editorial scoring, public review intake, verified-review labels, and anti-spam integration remain blocked by D-003, D-004, and D-013. Affiliate CTAs remain unavailable until D-005 is approved and implemented.

@@ -1,6 +1,6 @@
 # معمارية إضافة alborsa-platform
 
-> الحالة في 2026-09-16: نُفذت Foundation ومرحلة الأصول والمحتوى الخلفية، وبدأت Market Data بعقد `QuoteProviderInterface` و`NormalizedQuote` و`MockQuoteProvider` فقط. نُفذ القالب المخصص مستقلاً عن منطق المنتج. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
+> الحالة في 2026-09-16: نُفذت Foundation ووحدات Editorial وAssets وMarketData وBrokers وFinancialTools ضمن الحدود المعتمدة، ونُفذ القالب المخصص مستقلاً عن منطق المنتج. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
 
 ## حالة تنفيذ Foundation وخطوة العلاقات
 
@@ -10,7 +10,7 @@
 
 - Namespace: `Alborsa\Platform` مع Composer PSR-4.
 - الحد الأدنى المعلن في Plugin header هو WordPress `6.6` وPHP `8.1`؛ لم يُنفذ بعد Compatibility smoke test على مصفوفة WordPress حية.
-- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule` و`MarketDataModule` و`BrokersModule`.
+- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule` و`MarketDataModule` و`BrokersModule` و`FinancialToolsModule`.
 - إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات، والإصدار `3` يثبت قدرات `alb_content`، والإصدار `4` ينشئ جدول أحدث الأسعار.
 - `Shared\\Relationships\\RelationshipRepository` خدمة داخلية غير مسجلة في Module Registry: تضيف وتحذف هوية علاقة دقيقة، وتقرأ المصدر أو الهدف بترتيب `sort_order, id`. لا تحتوي على Hooks أو REST أو Cache أو فحص وجود الكائنات.
 - `Shared\\Relationships\\ContentAssetRelationshipService` يضيف طبقة المنتج فوق Repository: يستقبل كائنات `WP_Post`، يقصر المصادر على الخبر والتحليل والدليل، والهدف على الأصل، وأنواع العلاقة على `mentions` و`analyzes`. لا يسجل Hook أو REST write route أو واجهة Admin.
@@ -224,7 +224,7 @@ flowchart LR
 
 ### 4.7 Financial Tools
 
-مسؤوليتها في الإصدار الأول:
+المسؤولية المستهدفة في الإصدار الأول:
 
 - حاسبة الزكاة.
 - حاسبة نمو الاستثمار.
@@ -240,6 +240,14 @@ flowchart LR
 - لا يتم حفظ مدخلات المستخدم افتراضياً.
 - شرح الافتراضات والنتيجة جزء من Contract الأداة.
 - القالب مسؤول لاحقاً عن شكل النموذج والنتيجة.
+
+حالة التنفيذ:
+
+- نُفذت `CalculatorRegistry` وأربع خدمات مستقلة: `profit-loss` و`position-size` و`pip-value` و`compound-growth`.
+- يعرض `GET /wp-json/alborsa/v1/tools` الكتالوج، ويحسب `POST /wp-json/alborsa/v1/tools/{slug}/calculate` النتيجة من JSON بلا حفظ أو اتصال خارجي.
+- كل استجابة ناجحة تحمل `estimate_only=true` والافتراضات وإخلاء مسؤولية. تتطلب القيم العشرية Strings عادية؛ لا تقبل Float أو Scientific notation.
+- قيمة Pip تعتمد على معدل تحويل صريح يرسله المستهلك ولا تستنتج سعراً أو تجلبه. النمو المركب شهري بمعدل سنوي اسمي ثابت، والمساهمة في نهاية الشهر.
+- الزكاة معطلة بحالة `methodology_pending` حتى D-006، وتحويل العملات بحالة `provider_pending` حتى D-008؛ لا توجد أرقام أو قواعد افتراضية لهما.
 
 ### 4.8 SEO Integration
 

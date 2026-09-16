@@ -26,6 +26,13 @@ class WPRestRequestDouble {
 	public function get_param( string $key ): mixed {
 		return $this->parameters[ $key ] ?? null;
 	}
+
+	/** @return array<string, mixed> */
+	public function get_json_params(): array {
+		$json = $this->parameters['_json'] ?? null;
+
+		return is_array( $json ) ? $json : array();
+	}
 }
 
 if ( ! class_exists( 'WP_REST_Request' ) ) {
