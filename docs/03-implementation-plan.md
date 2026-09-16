@@ -43,7 +43,7 @@
 
 المدة التقديرية: أسبوع.
 
-حالة التنفيذ في 2026-09-16: نُفذ Scaffold وBootstrap وModule Registry وMigration version `1` والصلاحية الأساسية وفحوص Soft dependencies وSite Health وWP-CLI وبوابات الجودة. لم يُشغّل بعد Smoke test على تثبيت WordPress حي، لذلك يظل معيار الخروج الخاص ببيئة WordPress النظيفة بحاجة تحقق تشغيلي.
+حالة التنفيذ في 2026-09-16: نُفذ Scaffold وBootstrap وModule Registry ونظام migrations حتى الإصدار `3` وصلاحيات الإدارة والمحتوى وفحوص Soft dependencies وSite Health وWP-CLI وبوابات الجودة. لم يُشغّل بعد Smoke test على تثبيت WordPress حي، لذلك يظل معيار الخروج الخاص ببيئة WordPress النظيفة بحاجة تحقق تشغيلي.
 
 المهام:
 
@@ -58,9 +58,9 @@
 
 ملاحظات التنفيذ:
 
-- في Foundation الأصلية (الإصدار 1) لم تنشأ migration أي جدول؛ يضيف الإصدار 2 لاحقاً جدول العلاقات فقط، ولا يسجل Post Types أو REST routes.
+- في Foundation الأصلية (الإصدار 1) لم تنشأ migration أي جدول؛ يضيف الإصدار 2 جدول العلاقات، ويضيف الإصدار 3 صلاحيات محتوى الأنواع المنفذة. لا تنشئ هذه migrations مسارات REST مخصصة.
 - التعطيل يحذف قفل migration المؤقت فقط؛ لا يحذف version option أو capability أو بيانات مستقبلية.
-- `manage_alborsa_platform` ممنوحة لـ`administrator` فقط، ولا توجد أدوار منتج جديدة في Foundation.
+- `manage_alborsa_platform` ممنوحة لـ`administrator` فقط. الإصدار 3 يمنح مجموعة قدرات `alb_content` لدوري `administrator` و`editor` بدون إنشاء دور منتج جديد أو Workflow نشر جديد.
 - فحوص التبعيات تثبت Availability فقط، ولا تستبدل Audit الإصدارات والتراخيص والإعدادات والصحة.
 
 معيار الخروج:
@@ -83,7 +83,7 @@
 - REST endpoints للقراءة.
 - CSV importer للأصول مع Dry-run وتقارير أخطاء.
 - تسجيل Post Types وTaxonomies في Polylang وإعداد `wpml-config.xml` للنسخ الانتقائي للحقول (منفذ للكيانات وحقول الأصل الحالية؛ التحقق الحي على Staging باقٍ).
-- صلاحيات المحرر والمراجع.
+- صلاحيات المحرر والمراجع (منفذة حالياً عبر دور WordPress `editor` وقدرات `alb_content` المشتركة؛ حالات Workflow مخصصة غير منفذة).
 
 معيار الخروج:
 

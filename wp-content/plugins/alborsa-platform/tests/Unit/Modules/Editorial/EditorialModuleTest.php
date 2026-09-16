@@ -142,7 +142,7 @@ final class EditorialModuleTest extends UnitTestCase {
 		self::assertTrue( $arguments['show_in_rest'] );
 		self::assertSame( array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions' ), $arguments['supports'] );
 		self::assertFalse( $arguments['hierarchical'] );
-		self::assertSame( 'post', $arguments['capability_type'] );
+		self::assertSame( array( 'alb_content', 'alb_contents' ), $arguments['capability_type'] );
 		self::assertTrue( $arguments['map_meta_cap'] );
 		self::assertSame( self::LABEL_KEYS, array_keys( $arguments['labels'] ) );
 		self::assertNotContains( '', $arguments['labels'] );

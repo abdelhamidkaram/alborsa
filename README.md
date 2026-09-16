@@ -11,6 +11,7 @@
 - Module Registry صغير، ووحدات `Foundation` و`Editorial` و`Assets` مسجلة حالياً.
 - Activation/deactivation متكرران بأمان، مع دعم التفعيل على Multisite وعدم حذف بيانات دائمة عند التعطيل.
 - نظام Migrations بإصدار محفوظ في Option: الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات `{$wpdb->prefix}alb_relationships` بشكل idempotent عبر `dbDelta` وبدون Foreign Keys، مع مفتاح فريد لمنع التكرار وفهرس للبحث العكسي.
+- Migration الإصدار `3` يثبت صلاحيات محتوى مستقلة ومشتركة للأنواع المنفذة، ويمنحها لدوري `administrator` و`editor` مع إبقاء `manage_alborsa_platform` للإدارة فقط.
 - `RelationshipRepository` داخلي فقط: يتحقق من المعرفات والمفاتيح قبل الإدخال، يكتب وقت UTC، ويقرأ بحسب المصدر أو الهدف بترتيب ثابت؛ لم يسجل Hook أو REST API أو Cache.
 - نوعا المحتوى العامان `alb_analysis` و`alb_guide` مع دعم محرر المكونات وREST القياسي والمراجعات، وبنيتي روابط `/tahleel/` و`/taleem/` المعتمدتين.
 - سجل `alb_asset` مع تصنيفات النوع والسوق والقطاع، ومساري `/aswaq/tadawul/{symbol}/` و`/forex/{pair}/` المقيدين بتصنيف الأصل.
@@ -18,7 +19,7 @@
 - تصنيفات الموضوع ومستوى الدليل ومساره، مع تعطيل أرشيفات التصنيفات العامة لحين اعتماد عقود روابطها.
 - `wpml-config.xml` يثبت أنواع المحتوى والتصنيفات القابلة للترجمة، ويزامن حقول الأصل المحايدة فقط بين الترجمات.
 - إصدار مستقل لقواعد إعادة الكتابة ينفذ Soft Flush مرة واحدة بعد تسجيل الوحدات، ولا ينفذ Flush في كل طلب.
-- Capability واحدة محافظة باسم `manage_alborsa_platform` تضاف لدور `administrator`.
+- صلاحية الإدارة `manage_alborsa_platform` خاصة بالمدير، مع مجموعة `alb_content` للتحرير والنشر والمراجعة والحذف لدى المدير والمحرر.
 - فحوص Availability غير ملزمة للإضافات السبع الموجودة، بدون استدعاء APIs تابعة لها وبدون Fatal errors عند غيابها.
 - فحصان داخل Site Health وأمر `wp alborsa health`.
 - اختبارات PHPUnit معزولة وPHPCS وPHPStan وCI. لم يُعتمد بعد Harness تكامل WordPress حي داخل المستودع.
@@ -71,6 +72,7 @@ wp alborsa health
 
 - تشغيل الإضافة، تسجيل الوحدات، Versioned migrations والصلاحيات الأساسية.
 - Migration الإصدار `2` لإنشاء جدول العلاقات `{$wpdb->prefix}alb_relationships` عبر `dbDelta`.
+- Migration الإصدار `3` لإضافة قدرات المحتوى إلى المدير والمحرر.
 - تشخيص Availability للتكاملات الحالية فقط؛ لا تُفحص الإصدارات والتراخيص والإعدادات تلقائياً.
 - Site Health وWP-CLI health command وبوابات الجودة.
 

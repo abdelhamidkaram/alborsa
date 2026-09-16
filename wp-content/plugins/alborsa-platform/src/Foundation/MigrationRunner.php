@@ -14,7 +14,7 @@ use WP_Error;
 defined( 'ABSPATH' ) || exit;
 
 final class MigrationRunner {
-	public const LATEST_VERSION      = 2;
+	public const LATEST_VERSION      = 3;
 	public const VERSION_OPTION      = 'alborsa_platform_db_version';
 	public const LOCK_OPTION         = 'alborsa_platform_migration_lock';
 	public const RELATIONSHIPS_TABLE = 'alb_relationships';
@@ -115,10 +115,10 @@ final class MigrationRunner {
 	}
 
 	private function migrate_to( int $version ): ?WP_Error {
-		if ( 1 === $version && ! $this->role_capabilities->install() ) {
+		if ( in_array( $version, array( 1, 3 ), true ) && ! $this->role_capabilities->install() ) {
 			return new WP_Error(
 				'alborsa_platform_role_missing',
-				__( 'Alborsa Platform could not initialize the administrator role.', 'alborsa-platform' )
+				__( 'Alborsa Platform could not initialize the required WordPress role capabilities.', 'alborsa-platform' )
 			);
 		}
 

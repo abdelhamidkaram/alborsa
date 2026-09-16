@@ -200,7 +200,7 @@ final class AssetsModuleTest extends UnitTestCase {
 		self::assertTrue( $arguments['show_in_rest'] );
 		self::assertSame( array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions', 'custom-fields' ), $arguments['supports'] );
 		self::assertFalse( $arguments['hierarchical'] );
-		self::assertSame( 'post', $arguments['capability_type'] );
+		self::assertSame( array( 'alb_content', 'alb_contents' ), $arguments['capability_type'] );
 		self::assertTrue( $arguments['map_meta_cap'] );
 		self::assertNotContains( '', $arguments['labels'] );
 	}

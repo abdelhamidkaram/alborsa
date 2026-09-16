@@ -12,7 +12,9 @@ defined( 'ABSPATH' ) || exit;
 use Alborsa\Platform\Foundation\RoleCapabilities;
 
 return array(
-	'administrator' => array(
-		RoleCapabilities::MANAGE_PLATFORM,
+	'administrator' => array_merge(
+		array( RoleCapabilities::MANAGE_PLATFORM ),
+		RoleCapabilities::CONTENT_EDITOR_CAPABILITIES
 	),
+	'editor'        => RoleCapabilities::CONTENT_EDITOR_CAPABILITIES,
 );

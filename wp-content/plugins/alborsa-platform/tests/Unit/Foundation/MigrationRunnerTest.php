@@ -50,11 +50,11 @@ final class MigrationRunnerTest extends UnitTestCase {
 		self::assertNull( $runner->run() );
 		self::assertNull( $runner->run() );
 		self::assertSame( MigrationRunner::LATEST_VERSION, $options[ MigrationRunner::VERSION_OPTION ] );
-		self::assertSame( 2, $version_writes );
+		self::assertSame( 3, $version_writes );
 		self::assertArrayNotHasKey( MigrationRunner::LOCK_OPTION, $options );
 	}
 
-	public function test_run_from_v1_advances_to_v2_and_stores_version(): void {
+	public function test_run_from_v1_advances_to_latest_version(): void {
 		$options        = array( MigrationRunner::VERSION_OPTION => 1 );
 		$version_writes = 0;
 		$this->mock_options( $options, $version_writes );
@@ -72,7 +72,34 @@ final class MigrationRunnerTest extends UnitTestCase {
 
 		self::assertNull( $runner->run() );
 		self::assertStringContainsString( 'CREATE TABLE wp_alb_relationships', $executed_sql );
-		self::assertSame( 2, $options[ MigrationRunner::VERSION_OPTION ] );
+		self::assertSame( MigrationRunner::LATEST_VERSION, $options[ MigrationRunner::VERSION_OPTION ] );
+		self::assertSame( 2, $version_writes );
+	}
+
+	public function test_run_from_v2_installs_updated_role_capabilities(): void {
+		$options        = array( MigrationRunner::VERSION_OPTION => 2 );
+		$version_writes = 0;
+		$this->mock_options( $options, $version_writes );
+
+		$editor_role = new class() {
+			/** @var list<string> */
+			public array $capabilities = array();
+
+			public function add_cap( string $capability ): void {
+				$this->capabilities[] = $capability;
+			}
+		};
+
+		Functions\when( 'get_role' )->justReturn( $editor_role );
+		$runner = new MigrationRunner(
+			new RoleCapabilities(
+				array( 'editor' => array( RoleCapabilities::EDIT_CONTENT ) )
+			)
+		);
+
+		self::assertNull( $runner->run() );
+		self::assertSame( array( RoleCapabilities::EDIT_CONTENT ), $editor_role->capabilities );
+		self::assertSame( MigrationRunner::LATEST_VERSION, $options[ MigrationRunner::VERSION_OPTION ] );
 		self::assertSame( 1, $version_writes );
 	}
 

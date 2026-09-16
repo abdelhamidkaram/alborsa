@@ -49,7 +49,7 @@ final class AssetsModule implements Module {
 				'show_in_rest'    => true,
 				'supports'        => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions', 'custom-fields' ),
 				'hierarchical'    => false,
-				'capability_type' => 'post',
+				'capability_type' => array( 'alb_content', 'alb_contents' ),
 				'map_meta_cap'    => true,
 			)
 		);

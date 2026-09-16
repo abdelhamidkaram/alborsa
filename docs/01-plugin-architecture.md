@@ -11,7 +11,7 @@
 - Namespace: `Alborsa\Platform` مع Composer PSR-4.
 - الحد الأدنى المعلن في Plugin header هو WordPress `6.6` وPHP `8.1`؛ لم يُنفذ بعد Compatibility smoke test على مصفوفة WordPress حية.
 - `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule`.
-- إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ الصلاحيات، والإصدار `2` ينشئ جدول العلاقات `{$wpdb->prefix}alb_relationships` عبر WordPress `dbDelta` بدون Foreign Keys ومع مفتاح فريد وفهرس للبحث العكسي.
+- إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات، والإصدار `3` يثبت قدرات `alb_content` للمدير والمحرر.
 - `Shared\\Relationships\\RelationshipRepository` خدمة داخلية غير مسجلة في Module Registry: تضيف وتحذف هوية علاقة دقيقة، وتقرأ المصدر أو الهدف بترتيب `sort_order, id`. لا تحتوي على Hooks أو REST أو Cache أو فحص وجود الكائنات.
 - `EditorialModule` يسجل `alb_analysis` و`alb_guide` كنوعي محتوى عامين مع REST القياسي والمراجعات، على `/tahleel/` و`/taleem/`.
 - `EditorialModule` يسجل أيضاً `alb_topic` و`alb_guide_level` و`alb_guide_track`، بينما يسجل `AssetsModule` نوع `alb_asset` وتصنيفات `alb_asset_type` و`alb_exchange` و`alb_sector`.
@@ -20,7 +20,7 @@
 - `wpml-config.xml` في جذر الإضافة يفرض ترجمة الأنواع والتصنيفات المنفذة ومزامنة حقول الأصل المحايدة فقط باستخدام `copy`.
 - `RewriteRules` يؤخر Soft Flush إلى أولوية `999` من `init` وينفذه مرة واحدة بحسب إصدار مستقل، حتى تكون كل قواعد الوحدات مسجلة أولاً.
 - قفل مؤقت باسم `alborsa_platform_migration_lock` يمنع تشغيل migration متزامنة، ويُحذف عند التعطيل بدون حذف الإصدار أو الصلاحيات.
-- Capability باسم `manage_alborsa_platform` تضاف إلى `administrator` فقط.
+- Capability باسم `manage_alborsa_platform` تضاف إلى `administrator` فقط. أنواع المحتوى المنفذة تستخدم `alb_content`/`alb_contents` مع `map_meta_cap`، وتمنح قدرات التحرير والنشر والمحتوى الخاص والحذف إلى `administrator` و`editor`.
 - اختبارات Site Health بالمعرفين `alborsa_platform_dependencies` و`alborsa_platform_migrations`.
 - أمر WP-CLI: `wp alborsa health`، ويرجع خطأ عند نقص تكامل إنتاج مطلوب أو تأخر migration.
 - فحص Soft dependencies يعتمد على حالة التفعيل أو Runtime marker فقط. لا يعد فحصاً للإصدار أو الترخيص أو الإعداد أو صحة الخدمة.
