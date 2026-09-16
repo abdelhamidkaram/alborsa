@@ -12,9 +12,11 @@ defined( 'ABSPATH' ) || exit;
 use Alborsa\Platform\Foundation\FoundationModule;
 use Alborsa\Platform\Modules\Assets\AssetsModule;
 use Alborsa\Platform\Modules\Editorial\EditorialModule;
+use Alborsa\Platform\Modules\MarketData\MarketDataModule;
 
 return array(
 	new FoundationModule(),
 	new EditorialModule(),
 	new AssetsModule(),
+	new MarketDataModule(),
 );

@@ -177,7 +177,7 @@ Comment meta:
 
 ### `{$wpdb->prefix}alb_market_quotes` (منفذ في Migration الإصدار 4؛ مثال: `wp_alb_market_quotes`)
 
-> حالة التنفيذ: نُفذ الجدول و`QuoteRepository` للحفظ والقراءة. لا توجد مزامنة أو Cache أو REST route للسعر بعد. يطابق `NormalizedQuote` الحقول المزودة، مع Decimal strings مطبعة وتوقيت UTC وحالات `fresh` و`delayed` و`stale` و`unavailable`.
+> حالة التنفيذ: نُفذ الجدول و`QuoteRepository` والحفظ والقراءة والمزامنة الدفعية والكاش الموجّه ومسار REST للسعر. يطابق `NormalizedQuote` الحقول المزودة، مع Decimal strings مطبعة وتوقيت UTC وحالات `fresh` و`delayed` و`stale` و`unavailable`. لا يوجد Adapter حقيقي قبل اعتماد D-001.
 
 يحفظ أحدث Snapshot فقط لكل أصل/مزود:
 
@@ -202,6 +202,8 @@ Comment meta:
 المفتاح الفريد المنفذ: `(asset_id, provider_key)`. تستخدم حقول الأرقام `decimal(30,10)`، ولا توجد Foreign Keys أو جداول تاريخ أسعار ضمن الـMVP.
 
 لا نخزن الاستجابة الخام كاملة إلا مؤقتاً في Logs محمية عند التشخيص.
+
+لا يضيف التشغيل جدول تاريخ أو جدول صحة جديداً. تحفظ حالة آخر مزامنة لكل مزود في Option غير محمل تلقائياً باسم `alborsa_platform_quote_provider_health`، ولا تحتوي إلا على أوقات النجاح والفشل وكود الخطأ وعدد الأصول المحفوظة. تحفظ نسخ Object Cache تحت group `alborsa_platform_quotes`، ولا تعتبر مصدراً دائماً للبيانات.
 
 ### `wp_alb_affiliate_links`
 

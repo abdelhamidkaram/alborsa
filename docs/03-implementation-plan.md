@@ -95,7 +95,7 @@
 
 المدة التقديرية: 1–2 أسبوع حسب المزود.
 
-حالة التنفيذ: نُفذ `QuoteProviderInterface` و`NormalizedQuote` و`MockQuoteProvider` بدون اتصالات خارجية، كما نُفذ جدول أحدث الأسعار و`QuoteRepository`. اختيار وبناء Adapter حقيقي ينتظر اعتماد D-001، والمزامنة والكاش وREST قيد التنفيذ.
+حالة التنفيذ: نُفذ الحد المحايد عن المزود ودورة التشغيل كاملة بدون اتصالات خارجية: خرائط مفعلة، دفعات حتى 100 أصل، WP-CLI، أحدث Snapshot، Object Cache موجه، stale fallback، Site Health، وعقد PHP/REST للقراءة. اختيار وبناء Adapter حقيقي ينتظر اعتماد D-001، كما يبقى تركيب Server Cron واختبار Breeze/Varnish على الخادم.
 
 المهام:
 
@@ -104,11 +104,11 @@
 - Adapter المزود الحقيقي.
 - Normalization للعملات والتوقيت والأرقام.
 - جدول أحدث الأسعار وRepository (منفذان عبر Schema الإصدار `4`).
-- Scheduled sync وWP-CLI commands.
-- Retry/backoff وstale fallback.
-- Site Health panel لحالة المصدر.
-- REST endpoint للسعر مع Cache headers.
-- تكامل Object Cache Pro باستخدام WordPress Object Cache API بدون Full Flush.
+- WP-CLI للمزامنة الدفعية (منفذ) وتركيب Scheduled Server Cron (تشغيلي على الخادم).
+- stale fallback (منفذ) وسياسة retry/backoff للمزوّد الحقيقي (تنتظر D-001).
+- Site Health panel لحالة المصدر (منفذ).
+- REST endpoint للسعر مع Cache headers (منفذ).
+- تكامل Object Cache Pro باستخدام WordPress Object Cache API بدون Full Flush (منفذ برمجياً؛ يلزم تحقق Staging).
 - اختبار Breeze/Varnish وتوثيق استثناءات المسارات الديناميكية.
 
 معيار الخروج:

@@ -10,7 +10,7 @@
 
 - Namespace: `Alborsa\Platform` مع Composer PSR-4.
 - الحد الأدنى المعلن في Plugin header هو WordPress `6.6` وPHP `8.1`؛ لم يُنفذ بعد Compatibility smoke test على مصفوفة WordPress حية.
-- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule`.
+- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule` و`MarketDataModule`.
 - إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات، والإصدار `3` يثبت قدرات `alb_content`، والإصدار `4` ينشئ جدول أحدث الأسعار.
 - `Shared\\Relationships\\RelationshipRepository` خدمة داخلية غير مسجلة في Module Registry: تضيف وتحذف هوية علاقة دقيقة، وتقرأ المصدر أو الهدف بترتيب `sort_order, id`. لا تحتوي على Hooks أو REST أو Cache أو فحص وجود الكائنات.
 - `Shared\\Relationships\\ContentAssetRelationshipService` يضيف طبقة المنتج فوق Repository: يستقبل كائنات `WP_Post`، يقصر المصادر على الخبر والتحليل والدليل، والهدف على الأصل، وأنواع العلاقة على `mentions` و`analyzes`. لا يسجل Hook أو REST write route أو واجهة Admin.
@@ -186,7 +186,9 @@ flowchart LR
 
 `QuoteProviderInterface` منفذ الآن ويعيد قائمة مرتبة من `NormalizedQuote` أو `WP_Error` معروفاً للدفعة. يرفض الـDTO مدخلات Floating-point للأسعار ويحفظ Decimal strings حتى لا تدخل أخطاء IEEE-754، ويحول ISO-8601 ذي المنطقة الزمنية إلى UTC. `MockQuoteProvider` منفذ للاختبارات والتطوير المحلي فقط بحد 100 رمز، ولا توجد أي تهيئة لمزود خارجي قبل اعتماد D-001.
 
-ينشئ Schema الإصدار `4` جدول `{$wpdb->prefix}alb_market_quotes` لأحدث Snapshot فقط. ينفذ `QuoteRepository` Prepared upsert وقراءة صف واحد بهوية الأصل والمزود. لا يسجل Repository hooks، ولا ينفذ Network I/O أو Object Cache أو REST route؛ تضيفها طبقة المزامنة لاحقاً.
+ينشئ Schema الإصدار `4` جدول `{$wpdb->prefix}alb_market_quotes` لأحدث Snapshot فقط. ينفذ `QuoteRepository` Prepared upsert وقراءة صف واحد بهوية الأصل والمزود. تسجل `MarketDataModule` المزوّدين عبر `alborsa_platform_quote_providers`، وتقرأ خرائط `quotes` المفعلة، ثم ينفذ `wp alborsa market sync --provider=<key>` المزامنة في دفعات لا تتجاوز 100 أصل. لا يسجل المشروع Adapter خارجياً افتراضياً قبل اعتماد D-001.
+
+تستخدم القراءة `QuoteCache` في group مخصص باسم `alborsa_platform_quotes` وبمفاتيح Versioned لكل أصل/مزود. يحفظ `ProviderHealthStore` وقت آخر نجاح وفشل وكود الخطأ فقط، ويستعمله `QuoteReadService` لوسم آخر Snapshot سليمة كـ`stale` إذا حدث فشل أحدث منها. لا تنفذ أي من هذه الطبقات Network I/O في طلب الواجهة.
 
 `EmbedProviderInterface` منفصل عمداً: ويدجت العرض لا يُعامل كمصدر API ولا تُنسخ بياناته إلى قاعدة البيانات.
 
@@ -277,9 +279,9 @@ flowchart LR
 2. REST API للبيانات التي تحتاج تحديثاً مستقلاً عن Page Cache.
 3. Dynamic Blocks بمخرجات HTML دلالية قليلة التنسيق.
 
-القالب المنفذ حالياً يستخدم استعلامات WordPress العامة للمحتوى المنشور وحقول هوية الأصل العامة الموثقة. لا يقرأ `alb_market_quotes` مباشرة ولا `_alb_provider_mappings`، وتعرض قوالبه حالة عدم توفر السعر إلى أن توفر وحدة Market Data عقد قراءة عام معتمداً. كما لا ينشئ القالب منطق مقارنة وسطاء أو أفلييت أو معادلات أدوات بديلة عن وحدات الإضافة غير المنفذة.
+القالب المنفذ حالياً يستخدم استعلامات WordPress العامة للمحتوى المنشور وحقول هوية الأصل العامة الموثقة. لا يقرأ `alb_market_quotes` مباشرة ولا `_alb_provider_mappings`، ولم يربط بعد بـ`QuoteReadService` المنفذة، لذلك تظل قوالبه الحالية على حالة عدم توفر السعر. كما لا ينشئ القالب منطق مقارنة وسطاء أو أفلييت أو معادلات أدوات بديلة عن وحدات الإضافة غير المنفذة.
 
-المساران الأولان منفذان للقراءة العامة، وبقية المسارات مستهدفة عند تنفيذ وحداتها:
+مسارات الأصول الثلاثة منفذة للقراءة العامة، وبقية المسارات مستهدفة عند تنفيذ وحداتها:
 
 ```text
 GET  /wp-json/alborsa/v1/assets
@@ -294,6 +296,8 @@ GET  /go/{affiliate-slug}
 لا يُسمح للـREST API بإرجاع مفاتيح مزودين أو روابط داخلية حساسة أو بيانات تحقق خاصة بالمراجعين.
 
 عقد `GET /assets` الحالي يعيد `items` و`pagination`، ويقبل `page` و`per_page` و`search` و`asset_type` و`exchange`. يعيد `GET /assets/{id}` نفس الحقول العامة مع المحتوى وقائمة `related_content` المنشورة. تستخدم الاستعلامات `suppress_filters=false` حتى تطبق Polylang لغة طلب WordPress الحالية، ويلزم التحقق من ذلك على Staging.
+
+يعيد `GET /assets/{id}/quote` أصلًا منشوراً فقط، ويحتوي على قيم السعر العشرية كسلاسل، والعملة، و`as_of` و`received_at` بصيغة UTC، و`delay_seconds` و`status` و`stale` وبيانات الإسناد العامة. لا يعيد `provider_key` أو `provider_symbol`. يضبط `Cache-Control` بمدة بين 30 و300 ثانية حسب حالة التأخير، مع `stale-while-revalidate=60`.
 
 ## 7. الأداء والكاش
 

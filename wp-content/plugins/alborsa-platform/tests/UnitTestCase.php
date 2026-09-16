@@ -19,6 +19,10 @@ abstract class UnitTestCase extends TestCase {
 		Monkey\setUp();
 
 		Functions\when( '__' )->returnArg( 1 );
+		Functions\when( 'wp_parse_url' )->alias(
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- Implements the isolated wp_parse_url boundary.
+			static fn( string $url, int $component = -1 ): mixed => parse_url( $url, $component )
+		);
 	}
 
 	protected function tearDown(): void {

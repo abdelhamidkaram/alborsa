@@ -15,5 +15,6 @@ require_once ALBORSA_PLATFORM_PATH . 'vendor/autoload.php';
 require_once __DIR__ . '/Support/WPErrorDouble.php';
 require_once __DIR__ . '/Support/WPPostDouble.php';
 require_once __DIR__ . '/Support/WPRestRequestDouble.php';
+require_once __DIR__ . '/Support/WPRestResponseDouble.php';
 require_once __DIR__ . '/Support/WPTermDouble.php';
 require_once __DIR__ . '/Support/WpdbDouble.php';
