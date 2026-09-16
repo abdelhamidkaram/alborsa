@@ -13,6 +13,7 @@
 - `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule`.
 - إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات، والإصدار `3` يثبت قدرات `alb_content` للمدير والمحرر.
 - `Shared\\Relationships\\RelationshipRepository` خدمة داخلية غير مسجلة في Module Registry: تضيف وتحذف هوية علاقة دقيقة، وتقرأ المصدر أو الهدف بترتيب `sort_order, id`. لا تحتوي على Hooks أو REST أو Cache أو فحص وجود الكائنات.
+- `Shared\\Relationships\\ContentAssetRelationshipService` يضيف طبقة المنتج فوق Repository: يستقبل كائنات `WP_Post`، يقصر المصادر على الخبر والتحليل والدليل، والهدف على الأصل، وأنواع العلاقة على `mentions` و`analyzes`. لا يسجل Hook أو REST write route أو واجهة Admin.
 - `EditorialModule` يسجل `alb_analysis` و`alb_guide` كنوعي محتوى عامين مع REST القياسي والمراجعات، على `/tahleel/` و`/taleem/`.
 - `EditorialModule` يسجل أيضاً `alb_topic` و`alb_guide_level` و`alb_guide_track`، بينما يسجل `AssetsModule` نوع `alb_asset` وتصنيفات `alb_asset_type` و`alb_exchange` و`alb_sector`.
 - مسارا الأصول المعتمدان يفرضان التصنيف في Query: `stock` مع `tadawul` لمسار `/aswaq/tadawul/`، و`forex` لمسار `/forex/`. أرشيفات التصنيفات وPretty permalinks لبقية أنواع الأصول غير مفعلة قبل اعتماد عقودها.

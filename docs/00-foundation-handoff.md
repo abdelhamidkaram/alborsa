@@ -25,7 +25,7 @@
 ## Not implemented
 
 - Other product modules, remaining custom post types and taxonomies, editorial workflow/statuses and metadata, custom REST routes, or remaining feature tables (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
-- A minimal internal `RelationshipRepository` now persists, deletes, and reads exact relationships from the existing table; it is not wired as a module or API. D-002 approves Arabic on `/` and English under `/en/`; the remaining entity registration, custom REST routes, caching, and relationship product integration remain unimplemented.
+- `RelationshipRepository` persists, deletes, and reads exact relationships. `ContentAssetRelationshipService` now validates `WP_Post` object roles and allows `mentions`/`analyzes` links from posts, analyses, and guides to assets; it has no admin UI or REST write route yet. D-002 approves Arabic on `/` and English under `/en/`; the remaining entity registration, custom REST routes, caching, and UI integration remain unimplemented.
 - Market providers, user accounts, watchlists, or alerts.
 - Theme work, frontend design, CSS, or layouts.
 

@@ -13,7 +13,8 @@ This source release contains the Foundation, Editorial, and Assets modules. It
 provides bootstrap, module registration, migrations, conservative capabilities,
 dependency diagnostics, Site Health integration, the `wp alborsa health`
 command, analyses, guides, assets, their core taxonomies, validated asset
-metadata, and selective Polylang field synchronization.
+metadata, validated content-to-asset relationships, and selective Polylang field
+synchronization.
 
 It does not yet register custom REST routes, market providers, user accounts,
 watchlists, alerts, frontend layouts, CSS, or theme templates.

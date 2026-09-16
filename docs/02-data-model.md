@@ -229,7 +229,7 @@ Comment meta:
 
 ### `{$wpdb->prefix}alb_relationships` (مثال لموقع مفرد: `wp_alb_relationships`)
 
-نُفذت الـMigration الخاصة بإنشاء هذا الجدول ضمن إصدار Schema رقم `2` عبر `dbDelta`، كما نُفذ `RelationshipRepository` داخلي صغير للإدخال والحذف والقراءة الدقيقة. يسجل وقت `created_at` عبر `current_time( 'mysql', true )`، ويتحقق من المعرفات الموجبة والمفاتيح الشبيهة بمفاتيح WordPress من دون اقتطاع. لا توجد Service عامة أو API أو Cache أو فحص لوجود الكائنات بعد. أما الجداول المخصصة الأخرى في الـMVP (`wp_alb_market_quotes`, `wp_alb_affiliate_links`, `wp_alb_affiliate_clicks`) فتبقى عقوداً مخططة لم تنفذ جداولها بعد.
+نُفذت الـMigration الخاصة بإنشاء هذا الجدول ضمن إصدار Schema رقم `2` عبر `dbDelta`، كما نُفذ `RelationshipRepository` للإدخال والحذف والقراءة الدقيقة. يسجل وقت `created_at` عبر `current_time( 'mysql', true )`، ويتحقق من المعرفات الموجبة والمفاتيح الشبيهة بمفاتيح WordPress من دون اقتطاع. تضيف `ContentAssetRelationshipService` تحقق أدوار الكائنات الفعلية وتسمح حالياً بعلاقتي `mentions` و`analyzes` من الخبر/التحليل/الدليل إلى الأصل. لا توجد Admin UI أو REST write API أو Cache بعد. أما الجداول المخصصة الأخرى في الـMVP (`wp_alb_market_quotes`, `wp_alb_affiliate_links`, `wp_alb_affiliate_clicks`) فتبقى عقوداً مخططة لم تنفذ جداولها بعد.
 
 
 ## 9. جداول مؤجلة
