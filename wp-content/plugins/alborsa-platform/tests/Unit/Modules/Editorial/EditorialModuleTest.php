@@ -76,6 +76,7 @@ final class EditorialModuleTest extends UnitTestCase {
 	public function test_initialization_registers_editorial_content_model(): void {
 		$registered_post_types = array();
 		$registered_taxonomies = array();
+		Functions\when( 'register_post_meta' )->justReturn( true );
 
 		Functions\when( 'register_post_type' )->alias(
 			static function ( string $post_type, array $arguments ) use ( &$registered_post_types ): void {
@@ -140,7 +141,7 @@ final class EditorialModuleTest extends UnitTestCase {
 		);
 		self::assertTrue( $arguments['show_ui'] );
 		self::assertTrue( $arguments['show_in_rest'] );
-		self::assertSame( array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions' ), $arguments['supports'] );
+		self::assertSame( array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions', 'custom-fields' ), $arguments['supports'] );
 		self::assertFalse( $arguments['hierarchical'] );
 		self::assertSame( array( 'alb_content', 'alb_contents' ), $arguments['capability_type'] );
 		self::assertTrue( $arguments['map_meta_cap'] );

@@ -32,6 +32,10 @@ final class BrokerAdminMetaBoxTest extends UnitTestCase {
 			static fn( string $url ): string => str_starts_with( $url, 'https://' ) ? $url : ''
 		);
 		Functions\when( 'wp_unslash' )->returnArg();
+		Functions\when( 'get_option' )->justReturn( array() );
+		Functions\when( 'update_option' )->justReturn( true );
+		Functions\when( 'get_current_user_id' )->justReturn( 1 );
+		Functions\when( 'current_time' )->justReturn( '2026-09-16 12:00:00' );
 	}
 
 	protected function tearDown(): void {

@@ -21,6 +21,7 @@ final class BrokersModule implements Module {
 	public function register(): void {
 		add_action( 'init', array( $this, 'initialize' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+		( new BrokerReviewPrivacy() )->register();
 	}
 
 	public function initialize(): void {

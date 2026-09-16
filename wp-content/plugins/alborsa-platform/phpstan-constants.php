@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 const ALBORSA_PLATFORM_FILE    = '/wp-content/plugins/alborsa-platform/alborsa-platform.php';
 const ALBORSA_PLATFORM_PATH    = '/wp-content/plugins/alborsa-platform/';
+const WPINC                    = 'wp-includes';
 
 /**
  * Polylang public function stubs used only during static analysis.

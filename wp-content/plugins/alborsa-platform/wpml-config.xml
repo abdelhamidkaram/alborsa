@@ -19,6 +19,11 @@
 		<custom-field action="copy">alb_broker_deposit_currency</custom-field>
 		<custom-field action="copy">alb_broker_account_types</custom-field>
 		<custom-field action="copy">_alb_broker_licenses</custom-field>
+		<custom-field action="copy">alb_source_name</custom-field>
+		<custom-field action="copy">alb_source_url</custom-field>
+		<custom-field action="translate">alb_reviewer_id</custom-field>
+		<custom-field action="translate">alb_last_reviewed_at</custom-field>
+		<custom-field action="translate">alb_editorial_disclosure</custom-field>
 	</custom-fields>
 	<custom-types>
 		<custom-type translate="1">alb_analysis</custom-type>

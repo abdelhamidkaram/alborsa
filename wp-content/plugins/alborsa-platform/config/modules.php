@@ -15,6 +15,7 @@ use Alborsa\Platform\Modules\Brokers\BrokersModule;
 use Alborsa\Platform\Modules\Editorial\EditorialModule;
 use Alborsa\Platform\Modules\FinancialTools\FinancialToolsModule;
 use Alborsa\Platform\Modules\MarketData\MarketDataModule;
+use Alborsa\Platform\Modules\Seo\SeoIntegrationModule;
 
 return array(
 	new FoundationModule(),
@@ -23,4 +24,5 @@ return array(
 	new MarketDataModule(),
 	new BrokersModule(),
 	new FinancialToolsModule(),
+	new SeoIntegrationModule(),
 );

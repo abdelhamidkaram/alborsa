@@ -1,6 +1,6 @@
 # معمارية إضافة alborsa-platform
 
-> الحالة في 2026-09-16: نُفذت Foundation ووحدات Editorial وAssets وMarketData وBrokers وFinancialTools ضمن الحدود المعتمدة، ونُفذ القالب المخصص مستقلاً عن منطق المنتج. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
+> الحالة في 2026-09-16: نُفذت Foundation ووحدات Editorial وAssets وMarketData وBrokers وFinancialTools وSeoIntegration ضمن الحدود المعتمدة، ونُفذ القالب المخصص مستقلاً عن منطق المنتج. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
 
 ## حالة تنفيذ Foundation وخطوة العلاقات
 
@@ -10,7 +10,7 @@
 
 - Namespace: `Alborsa\Platform` مع Composer PSR-4.
 - الحد الأدنى المعلن في Plugin header هو WordPress `6.6` وPHP `8.1`؛ لم يُنفذ بعد Compatibility smoke test على مصفوفة WordPress حية.
-- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule` و`MarketDataModule` و`BrokersModule` و`FinancialToolsModule`.
+- `Module` و`ModuleRegistry` لتسجيل الوحدات بالترتيب مرة واحدة؛ المسجلة الآن هي `FoundationModule` و`EditorialModule` و`AssetsModule` و`MarketDataModule` و`BrokersModule` و`FinancialToolsModule` و`SeoIntegrationModule`.
 - إصدار migration محفوظ في option باسم `alborsa_platform_db_version`؛ الإصدار `1` يهيئ صلاحية الإدارة، والإصدار `2` ينشئ جدول العلاقات، والإصدار `3` يثبت قدرات `alb_content`، والإصدار `4` ينشئ جدول أحدث الأسعار.
 - `Shared\\Relationships\\RelationshipRepository` خدمة داخلية غير مسجلة في Module Registry: تضيف وتحذف هوية علاقة دقيقة، وتقرأ المصدر أو الهدف بترتيب `sort_order, id`. لا تحتوي على Hooks أو REST أو Cache أو فحص وجود الكائنات.
 - `Shared\\Relationships\\ContentAssetRelationshipService` يضيف طبقة المنتج فوق Repository: يستقبل كائنات `WP_Post`، يقصر المصادر على الخبر والتحليل والدليل، والهدف على الأصل، وأنواع العلاقة على `mentions` و`analyzes`. لا يسجل Hook أو REST write route أو واجهة Admin.
@@ -154,6 +154,8 @@ flowchart LR
 - إدخال RSS كمسودات فقط، مع منع النشر التلقائي افتراضياً.
 - إظهار متطلبات الإفصاح والتنبيه المالي للقالب.
 
+حالة التنفيذ: الحقول الخمسة للمصدر والمراجع والمراجعة والإفصاح مسجلة لـ`post` والتحليل والدليل، ولها Meta box محمية. مستورد RSS يعمل من WP-CLI فقط، يتطلب لغة Polylang صريحة، يقبل 1–50 عنصراً، يمنع التكرار، وينشئ `draft` بلا نشر آلي.
+
 ### 4.3 Assets
 
 مسؤوليتها:
@@ -260,7 +262,9 @@ flowchart LR
 - Schema مخصص فقط عندما لا يغطيه Yoast، وبعد التحقق من مطابقته للمحتوى الظاهر.
 - إدراج المصدر، الكاتب، المراجع، تاريخ النشر وتاريخ آخر مراجعة في البيانات المتاحة للقالب وSEO.
 
-مرجع التنفيذ المستقبلي: [Yoast Schema integration guidelines](https://developer.yoast.com/features/schema/integration-guidelines/). لا تُثبت أسماء Hooks في الكود قبل مراجعة الوثائق المتوافقة مع الإصدار المثبت وقت التنفيذ.
+حالة التنفيذ: تستخدم الوحدة Filters الرسمية `wpseo_schema_article_post_types` و`wpseo_schema_article` و`wpseo_schema_webpage`. تضيف التحليل والدليل إلى Article graph، وتضيف `citation` للمصدر و`reviewedBy` و`lastReviewed` عندما تتوافر Meta صحيحة. لا تطبع Schema أو Canonical أو robots مستقلة. لا توجد حالياً صفحات مقارنة HTML مبنية من Query Parameters؛ لذلك لا يوجد noindex برمجي لها حتى ينفذ عقدها الفعلي.
+
+المراجع: [Yoast Schema API](https://developer.yoast.com/features/schema/api/) و[Article graph piece](https://developer.yoast.com/features/schema/pieces/article/).
 
 ### 4.9 Multilingual Integration
 
@@ -345,7 +349,8 @@ GET  /go/{affiliate-slug}
 - Allowlist صارمة للـAffiliate redirects لمنع Open Redirect.
 - عدم السماح بحقن HTML قادم من مزود البيانات.
 - عدم حفظ IP كامل في تقارير الأفلييت؛ إن لزم منع التكرار يستخدم Hash محدود المدة.
-- دعم أدوات WordPress لتصدير/حذف بيانات مراجعات المستخدمين.
+- دعم أدوات WordPress لتصدير/حذف بيانات مراجعات المستخدمين — منفذ للـComment Meta الخاصة بمراجعات الوسطاء، مع تشغيل ممحاة المنصة قبل ممحاة التعليقات الأساسية.
+- سجل التدقيق الإداري يحتفظ بحد أقصى 200 حدث غير محمّل آلياً، ولا يسجل القيم أو المحتوى أو البريد أو عنوان IP.
 - عملية Uninstall لا تحذف بيانات المنصة افتراضياً؛ الحذف يحتاج اختياراً صريحاً.
 
 ## 9. تعدد اللغات

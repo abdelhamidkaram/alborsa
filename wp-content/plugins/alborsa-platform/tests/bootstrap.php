@@ -18,4 +18,5 @@ require_once __DIR__ . '/Support/WPPostDouble.php';
 require_once __DIR__ . '/Support/WPRestRequestDouble.php';
 require_once __DIR__ . '/Support/WPRestResponseDouble.php';
 require_once __DIR__ . '/Support/WPTermDouble.php';
+require_once __DIR__ . '/Support/WPUserDouble.php';
 require_once __DIR__ . '/Support/WpdbDouble.php';

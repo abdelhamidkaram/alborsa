@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Alborsa\Platform\Modules\Brokers;
 
+use Alborsa\Platform\Foundation\AuditLog;
+
 defined( 'ABSPATH' ) || exit;
 
 final class BrokerAdminMetaBox {
@@ -67,6 +69,7 @@ final class BrokerAdminMetaBox {
 		$this->save_list_fields( $broker_id, $payload );
 		$this->save_boolean( $broker_id, $payload );
 		$this->save_licenses( $broker_id, $payload );
+		( new AuditLog() )->record( 'broker_profile_updated', $broker->post_type, $broker_id );
 	}
 
 	/** @return array<string, string> */

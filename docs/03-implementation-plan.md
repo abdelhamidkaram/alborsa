@@ -165,16 +165,18 @@
 
 المدة التقديرية: أسبوع.
 
+حالة التنفيذ: نُفذت Meta المصدر والمراجع والمراجعة والإفصاح، ومستورد RSS الآمن إلى Draft مع منع التكرار ولغة Polylang صريحة، وتكامل Yoast داخل Graph الموجود، وسجل تدقيق محدود، وPrivacy exporter/eraser لمراجعات الوسطاء. يبقى الاختبار الحي لإعدادات Polylang وYoast والكاش، ولا توجد قواعد noindex لصفحات مقارنة ديناميكية لأنها لم تنفذ كصفحات HTML بعد.
+
 المهام:
 
-- تكامل Yoast SEO وإضافة الكيانات المطلوبة إلى Schema graph الخاص به.
-- Canonical وnoindex rules للصفحات الديناميكية.
-- Schema graph بدون ازدواج.
-- اختبار Polylang مع Post Types وTaxonomies وحقول Copy/Translate.
-- حقول المصادر والكاتب والمراجع وآخر مراجعة.
-- RSS importer إلى Draft مع منع التكرار.
-- Audit log محدود للإجراءات الحساسة.
-- Privacy exporter/eraser لمراجعات المستخدمين.
+- تكامل Yoast SEO وإضافة البيانات المطلوبة إلى Schema graph الخاص به (منفذ للكيانات التحريرية).
+- Canonical وnoindex rules للصفحات الديناميكية (Yoast يملك Canonical؛ noindex ينتظر وجود صفحة HTML ديناميكية فعلية).
+- Schema graph بدون ازدواج (منفذ برمجياً؛ يحتاج فحص المخرجات على Staging).
+- اختبار Polylang مع Post Types وTaxonomies وحقول Copy/Translate (العقود منفذة؛ الاختبار الحي متبقٍ).
+- حقول المصادر والكاتب والمراجع وآخر مراجعة (الكاتب Core؛ بقية الحقول منفذة).
+- RSS importer إلى Draft مع منع التكرار (منفذ عبر WP-CLI).
+- Audit log محدود للإجراءات الحساسة (منفذ لتحديثات الوسطاء والبيانات التحريرية).
+- Privacy exporter/eraser لمراجعات المستخدمين (منفذ للـComment Meta المخصصة).
 
 معيار الخروج:
 

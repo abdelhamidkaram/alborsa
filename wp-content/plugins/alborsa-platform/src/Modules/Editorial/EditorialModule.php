@@ -27,6 +27,27 @@ final class EditorialModule implements Module {
 	public function initialize(): void {
 		$this->register_post_types();
 		$this->register_taxonomies();
+		$meta = new EditorialMeta();
+		$meta->register();
+		( new EditorialAdminMetaBox( $meta ) )->register();
+		$this->register_cli( $meta );
+	}
+
+	private function register_cli( EditorialMeta $meta ): void {
+		if ( ! defined( 'WP_CLI' ) || ! WP_CLI || ! class_exists( 'WP_CLI' ) ) {
+			return;
+		}
+
+		$importer = new RssImportService(
+			new WordPressRssFeedReader(),
+			new PolylangEditorialLanguageGateway(),
+			$meta
+		);
+		\WP_CLI::add_command(
+			'alborsa editorial import-rss',
+			new RssImportCommand( $importer ),
+			array( 'shortdesc' => __( 'Imports curated RSS items as editorial drafts.', 'alborsa-platform' ) )
+		);
 	}
 
 	public function register_post_types(): void {
@@ -76,7 +97,7 @@ final class EditorialModule implements Module {
 			),
 			'show_ui'         => true,
 			'show_in_rest'    => true,
-			'supports'        => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions' ),
+			'supports'        => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions', 'custom-fields' ),
 			'hierarchical'    => false,
 			'capability_type' => array( 'alb_content', 'alb_contents' ),
 			'map_meta_cap'    => true,
