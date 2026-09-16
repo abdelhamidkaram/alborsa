@@ -95,10 +95,12 @@
 
 المدة التقديرية: 1–2 أسبوع حسب المزود.
 
+حالة التنفيذ: نُفذ `QuoteProviderInterface` و`NormalizedQuote` و`MockQuoteProvider` بدون اتصالات خارجية. اختيار وبناء Adapter حقيقي ينتظر اعتماد D-001، وبقية التخزين والمزامنة والكاش قيد التنفيذ.
+
 المهام:
 
-- `QuoteProviderInterface` وDTOs.
-- Mock Provider وFixtures للاختبار.
+- `QuoteProviderInterface` وDTOs (منفذة).
+- Mock Provider وFixtures للاختبار (منفذ كمزود حتمي يقبل Fixtures مطبعة).
 - Adapter المزود الحقيقي.
 - Normalization للعملات والتوقيت والأرقام.
 - جدول أحدث الأسعار وRepository.

@@ -177,6 +177,8 @@ Comment meta:
 
 ### `wp_alb_market_quotes`
 
+> حالة التنفيذ: الجدول نفسه لم ينفذ بعد. نُفذ عقد `NormalizedQuote` الذي يطابق حقوله المزودة، مع Decimal strings مطبعة وتوقيت UTC وحالات `fresh` و`delayed` و`stale` و`unavailable`.
+
 يحفظ أحدث Snapshot فقط لكل أصل/مزود:
 
 - `asset_id`

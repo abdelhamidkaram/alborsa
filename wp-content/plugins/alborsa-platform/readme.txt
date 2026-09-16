@@ -18,6 +18,8 @@ synchronization. It also exposes bounded, read-only public REST routes for the
 published asset collection and asset details with published related content.
 The `wp alborsa assets import <file> [--dry-run]` command provides bounded,
 language-explicit CSV imports with row reports and duplicate prevention.
+Provider-neutral normalized quote contracts and a deterministic mock provider
+are included without configuring or contacting a real market-data source.
 
 It does not yet register market-data or write REST routes, market providers,
 user accounts, watchlists, alerts, frontend layouts, CSS, or theme templates.

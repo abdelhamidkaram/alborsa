@@ -1,6 +1,6 @@
 # معمارية إضافة alborsa-platform
 
-> الحالة في 2026-09-16: نُفذت Foundation وجدول العلاقات وRepository داخلي، ثم سُجلت أنواع المحتوى `alb_analysis` و`alb_guide` و`alb_asset` وتصنيفاتها الأساسية داخل وحدتي Editorial وAssets ومسارا REST لقراءة الأصول. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
+> الحالة في 2026-09-16: نُفذت Foundation ومرحلة الأصول والمحتوى الخلفية، وبدأت Market Data بعقد `QuoteProviderInterface` و`NormalizedQuote` و`MockQuoteProvider` فقط. أسماء الواجهات والمسارات والجداول الأخرى تظل مقترحات ما لم يذكر تنفيذها صراحة.
 
 ## حالة تنفيذ Foundation وخطوة العلاقات
 
@@ -183,6 +183,8 @@ flowchart LR
 | `QuoteProviderInterface` | مجموعة رموز خاصة بالمزود | دفعة Quotes مطبعة أو خطأ معروف | جلب الأسعار الرقمية المرخصة |
 | `ReferenceDataProviderInterface` | طلب مزامنة أو Cursor | دفعة بيانات أصول مرجعية | مزامنة الشركات والرموز والخصائص الثابتة |
 | `EmbedProviderInterface` | رمز الأصل وسياق العرض | إعداد Embed مصرح به | عرض Widget فقط بدون اعتبارها API بيانات |
+
+`QuoteProviderInterface` منفذ الآن ويعيد قائمة مرتبة من `NormalizedQuote` أو `WP_Error` معروفاً للدفعة. يرفض الـDTO مدخلات Floating-point للأسعار ويحفظ Decimal strings حتى لا تدخل أخطاء IEEE-754، ويحول ISO-8601 ذي المنطقة الزمنية إلى UTC. `MockQuoteProvider` منفذ للاختبارات والتطوير المحلي فقط بحد 100 رمز، ولا توجد أي تهيئة لمزود خارجي قبل اعتماد D-001.
 
 `EmbedProviderInterface` منفصل عمداً: ويدجت العرض لا يُعامل كمصدر API ولا تُنسخ بياناته إلى قاعدة البيانات.
 
