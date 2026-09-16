@@ -49,6 +49,37 @@ function enqueue_assets(): void {
 		)
 	);
 
+	wp_enqueue_script(
+		'alborsa-theme-platform',
+		ALBORSA_THEME_URL . '/assets/js/platform.js',
+		array(),
+		asset_version( '/assets/js/platform.js' ),
+		array(
+			'strategy'  => 'defer',
+			'in_footer' => true,
+		)
+	);
+
+	wp_localize_script(
+		'alborsa-theme-platform',
+		'alborsaPlatform',
+		array(
+			'restBase' => esc_url_raw( rest_url( 'alborsa/v1/' ) ),
+			'strings'  => array(
+				'unavailable'       => __( 'غير متاح', 'alborsa' ),
+				'fresh'             => __( 'محدّث من المصدر', 'alborsa' ),
+				'delayed'           => __( 'بيانات متأخرة', 'alborsa' ),
+				'stale'             => __( 'بيانات قديمة', 'alborsa' ),
+				'loading'           => __( 'جارٍ التحميل…', 'alborsa' ),
+				'requestError'      => __( 'تعذر إكمال الطلب الآن. حاول مرة أخرى.', 'alborsa' ),
+				'invalidCalculator' => __( 'راجع القيم المدخلة ثم أعد المحاولة.', 'alborsa' ),
+				'chooseBrokers'     => __( 'اختر وسيطين أو ثلاثة للمقارنة.', 'alborsa' ),
+				'maximumBrokers'    => __( 'يمكن مقارنة ثلاثة وسطاء كحد أقصى.', 'alborsa' ),
+				'noData'            => __( 'لم تُنشر بيانات كافية بعد.', 'alborsa' ),
+			),
+		)
+	);
+
 	if ( is_front_page() ) {
 		wp_enqueue_style(
 			'alborsa-theme-home',

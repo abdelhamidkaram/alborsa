@@ -458,6 +458,20 @@ p {
 	color: oklch(78% 0.02 253);
 }
 
+.market-ribbon__list small {
+	color: color-mix(in oklch, var(--color-surface-raised) 65%, var(--color-navy-900));
+	font-size: 0.65rem;
+}
+
+.market-ribbon__list [data-quote-state="fresh"] [data-quote-status] {
+	color: color-mix(in oklch, var(--color-up) 65%, var(--color-surface-raised));
+}
+
+.market-ribbon__list [data-quote-state="delayed"] [data-quote-status],
+.market-ribbon__list [data-quote-state="stale"] [data-quote-status] {
+	color: var(--color-gold-500);
+}
+
 .market-ribbon__empty {
 	display: flex;
 	align-items: center;
@@ -474,6 +488,18 @@ p {
 
 .status-dot--unavailable {
 	background: oklch(70% 0.02 253);
+}
+
+.status-dot--available {
+	background: var(--color-up);
+}
+
+.quote-value--up {
+	color: var(--color-up) !important;
+}
+
+.quote-value--down {
+	color: var(--color-down) !important;
 }
 
 .mobile-dock {

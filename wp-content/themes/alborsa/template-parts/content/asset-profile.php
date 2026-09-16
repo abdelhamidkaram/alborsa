@@ -45,13 +45,18 @@ while ( have_posts() ) :
 		</header>
 
 		<div class="site-container asset-profile__grid">
-			<section class="quote-state" aria-labelledby="quote-state-title">
+			<section class="quote-state" aria-labelledby="quote-state-title" data-alborsa-quote="<?php echo esc_attr( (string) $asset_id ); ?>">
 				<div>
 					<p class="eyebrow"><?php esc_html_e( 'بيانات السوق', 'alborsa' ); ?></p>
-					<h2 id="quote-state-title"><?php esc_html_e( 'السعر غير متاح حالياً', 'alborsa' ); ?></h2>
-					<p><?php esc_html_e( 'لن يُعرض سعر أو تغيير أو حجم تداول قبل اتصال المنصة بمصدر بيانات مرخّص يوضح المصدر ووقت التحديث ودرجة التأخير.', 'alborsa' ); ?></p>
+					<h2 id="quote-state-title" data-quote-price><?php esc_html_e( 'السعر غير متاح حالياً', 'alborsa' ); ?></h2>
+					<p class="quote-state__change"><?php esc_html_e( 'التغيير:', 'alborsa' ); ?> <strong data-quote-change>—</strong></p>
+					<dl class="quote-state__meta">
+						<div><dt><?php esc_html_e( 'حالة اللقطة', 'alborsa' ); ?></dt><dd data-quote-status><?php esc_html_e( 'بانتظار المصدر', 'alborsa' ); ?></dd></div>
+						<div><dt><?php esc_html_e( 'وقت السوق', 'alborsa' ); ?></dt><dd data-quote-as-of>—</dd></div>
+						<div><dt><?php esc_html_e( 'المصدر', 'alborsa' ); ?></dt><dd data-quote-source>—</dd></div>
+					</dl>
 				</div>
-				<span class="availability-tag"><i class="status-dot status-dot--unavailable" aria-hidden="true"></i><?php esc_html_e( 'بانتظار مزود معتمد', 'alborsa' ); ?></span>
+				<p class="quote-state__notice"><?php esc_html_e( 'هذه لقطة متزامنة وليست بالضرورة لحظية. راجع حالة التأخير ووقت السوق قبل استخدامها.', 'alborsa' ); ?></p>
 			</section>
 
 			<section class="asset-facts" aria-labelledby="asset-facts-title">

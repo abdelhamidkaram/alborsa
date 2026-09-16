@@ -383,15 +383,29 @@
 }
 
 .market-table__row a span,
-.market-table__status {
+.market-table__quote {
 	color: var(--color-ink-soft);
 	font-size: var(--text-sm);
 }
 
-.market-table__status {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-2);
+.market-table__quote {
+	display: grid;
+	justify-items: end;
+}
+
+.market-table__quote strong {
+	color: var(--color-ink);
+	font-family: var(--font-data);
+	font-variant-numeric: tabular-nums;
+}
+
+.market-table__quote small {
+	font-size: var(--text-xs);
+}
+
+.market-table__row[data-quote-state="delayed"] .market-table__quote small,
+.market-table__row[data-quote-state="stale"] .market-table__quote small {
+	color: var(--color-gold-600);
 }
 
 .market-ranking-state {

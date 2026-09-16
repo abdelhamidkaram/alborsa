@@ -50,12 +50,12 @@ get_header();
 		<div>
 			<p class="eyebrow"><?php esc_html_e( 'خريطة السوق', 'alborsa' ); ?></p>
 			<h1><?php esc_html_e( 'الأسواق', 'alborsa' ); ?></h1>
-			<p><?php esc_html_e( 'مدخل منظم للأسهم الخليجية والفوركس والسلع والعملات الرقمية، مع إظهار حالة البيانات بوضوح.', 'alborsa' ); ?></p>
+			<p><?php esc_html_e( 'مدخل منظم للأسهم الخليجية والفوركس والسلع والعملات الرقمية، مع إظهار المصدر ووقت التحديث وحالة البيانات بوضوح.', 'alborsa' ); ?></p>
 		</div>
 		<div class="hero-state">
 			<span class="status-dot status-dot--unavailable" aria-hidden="true"></span>
-			<strong><?php esc_html_e( 'الأسعار غير متصلة بعد', 'alborsa' ); ?></strong>
-			<p><?php esc_html_e( 'سجل الأصول يعمل، بينما السعر والحجم والتغيير ينتظرون مزوداً مرخصاً.', 'alborsa' ); ?></p>
+			<strong><?php esc_html_e( 'الأسعار مشروطة بمصدر معتمد', 'alborsa' ); ?></strong>
+			<p><?php esc_html_e( 'يعرض كل أصل آخر لقطة متزامنة فقط عند توثيق المزود ودرجة التأخير.', 'alborsa' ); ?></p>
 		</div>
 	</div>
 </section>
@@ -85,7 +85,7 @@ get_header();
 			<div>
 				<p class="eyebrow"><?php esc_html_e( 'السجل المنشور', 'alborsa' ); ?></p>
 				<h2 id="asset-registry-title"><?php esc_html_e( 'الأصول المالية', 'alborsa' ); ?></h2>
-				<p><?php esc_html_e( 'هذه بيانات تعريفية فقط. لا تُعرض أسعار قبل توثيق المصدر ووقت التحديث ودرجة التأخير.', 'alborsa' ); ?></p>
+				<p><?php esc_html_e( 'تُحمّل اللقطة السعرية بعد الصفحة لتبقى واضحة المصدر والحالة ولا تُحتجز داخل كاش الصفحة.', 'alborsa' ); ?></p>
 			</div>
 		</header>
 
@@ -105,7 +105,10 @@ get_header();
 						</a>
 						<span role="cell"><?php echo esc_html( trim( $asset_record['type_labels'] . ( '' !== $asset_record['exchange_labels'] ? ' / ' . $asset_record['exchange_labels'] : '' ) ) ); ?></span>
 						<span role="cell" dir="ltr"><?php echo esc_html( '' !== $asset_record['quote_currency'] ? $asset_record['quote_currency'] : '—' ); ?></span>
-						<span class="availability-tag" role="cell"><i class="status-dot status-dot--unavailable" aria-hidden="true"></i><?php esc_html_e( 'غير متاح', 'alborsa' ); ?></span>
+						<span class="asset-quote-cell" role="cell" data-alborsa-quote="<?php echo esc_attr( (string) $asset_record['id'] ); ?>">
+							<strong data-quote-price><?php esc_html_e( 'غير متاح', 'alborsa' ); ?></strong>
+							<small data-quote-status><?php esc_html_e( 'بانتظار المصدر', 'alborsa' ); ?></small>
+						</span>
 					</div>
 				<?php endforeach; ?>
 			</div>

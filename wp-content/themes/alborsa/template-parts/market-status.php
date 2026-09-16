@@ -26,9 +26,10 @@ $market_assets = assets();
 			<ul class="market-ribbon__list" aria-label="<?php esc_attr_e( 'الأصول المتاحة في سجل السوق', 'alborsa' ); ?>">
 				<?php foreach ( $market_assets as $market_asset ) : ?>
 					<li>
-						<a href="<?php echo esc_url( $market_asset['url'] ); ?>">
+						<a href="<?php echo esc_url( $market_asset['url'] ); ?>" data-alborsa-quote="<?php echo esc_attr( (string) $market_asset['id'] ); ?>">
 							<strong><?php echo esc_html( '' !== $market_asset['symbol'] ? $market_asset['symbol'] : $market_asset['title'] ); ?></strong>
-							<span><?php esc_html_e( 'السعر غير متاح', 'alborsa' ); ?></span>
+							<span data-quote-price><?php esc_html_e( 'السعر غير متاح', 'alborsa' ); ?></span>
+							<small data-quote-status><?php esc_html_e( 'غير متاح', 'alborsa' ); ?></small>
 						</a>
 					</li>
 				<?php endforeach; ?>

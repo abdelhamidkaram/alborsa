@@ -31,12 +31,12 @@ $market_assets = isset( $args['assets'] ) && is_array( $args['assets'] ) ? $args
 				<span role="columnheader"><?php esc_html_e( 'حالة السعر', 'alborsa' ); ?></span>
 			</div>
 			<?php foreach ( $market_assets as $market_asset ) : ?>
-				<div class="market-table__row" role="row">
+				<div class="market-table__row" role="row" data-alborsa-quote="<?php echo esc_attr( (string) $market_asset['id'] ); ?>">
 					<a role="cell" href="<?php echo esc_url( $market_asset['url'] ); ?>">
 						<strong><?php echo esc_html( '' !== $market_asset['symbol'] ? $market_asset['symbol'] : $market_asset['title'] ); ?></strong>
 						<span><?php echo esc_html( $market_asset['title'] ); ?></span>
 					</a>
-					<span class="market-table__status" role="cell"><i class="status-dot status-dot--unavailable" aria-hidden="true"></i><?php esc_html_e( 'غير متاح', 'alborsa' ); ?></span>
+					<span class="market-table__quote" role="cell"><strong data-quote-price><?php esc_html_e( 'غير متاح', 'alborsa' ); ?></strong><small data-quote-status><?php esc_html_e( 'بانتظار المصدر', 'alborsa' ); ?></small></span>
 				</div>
 			<?php endforeach; ?>
 		</div>

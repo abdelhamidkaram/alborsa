@@ -23,8 +23,15 @@ get_header();
 
 while ( have_posts() ) :
 	the_post();
-	$content_type = get_post_type();
-	$topics       = term_names( get_the_ID(), 'alb_topic' );
+	$content_id    = get_the_ID();
+	$content_type  = get_post_type();
+	$topics        = term_names( $content_id, 'alb_topic' );
+	$source_name   = (string) get_post_meta( $content_id, 'alb_source_name', true );
+	$source_url    = (string) get_post_meta( $content_id, 'alb_source_url', true );
+	$reviewer_id   = absint( get_post_meta( $content_id, 'alb_reviewer_id', true ) );
+	$last_reviewed = (string) get_post_meta( $content_id, 'alb_last_reviewed_at', true );
+	$disclosure    = (string) get_post_meta( $content_id, 'alb_editorial_disclosure', true );
+	$reviewer      = $reviewer_id > 0 ? get_userdata( $reviewer_id ) : false;
 	?>
 	<article <?php post_class( 'singular-entry' ); ?>>
 		<header class="singular-entry__header">
@@ -36,6 +43,10 @@ while ( have_posts() ) :
 					<span><?php echo esc_html( get_the_author() ); ?></span>
 					<?php if ( '' !== $topics ) : ?>
 						<span><?php echo esc_html( $topics ); ?></span>
+					<?php endif; ?>
+					<?php if ( '' !== $last_reviewed ) : ?>
+						<?php /* translators: %s: date of the latest editorial review. */ ?>
+						<span><?php echo esc_html( sprintf( __( 'آخر مراجعة: %s', 'alborsa' ), $last_reviewed ) ); ?></span>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -64,7 +75,25 @@ while ( have_posts() ) :
 			</div>
 
 			<aside class="content-disclosure" aria-labelledby="content-disclosure-title">
-				<h2 id="content-disclosure-title"><?php esc_html_e( 'قبل أن تقرأ', 'alborsa' ); ?></h2>
+				<h2 id="content-disclosure-title"><?php esc_html_e( 'المصدر والمراجعة', 'alborsa' ); ?></h2>
+				<?php if ( '' !== $source_name ) : ?>
+					<p><strong><?php esc_html_e( 'المصدر:', 'alborsa' ); ?></strong>
+					<?php if ( '' !== $source_url ) : ?>
+						<a href="<?php echo esc_url( $source_url ); ?>" rel="noopener noreferrer"><?php echo esc_html( $source_name ); ?></a>
+					<?php else : ?>
+						<?php echo esc_html( $source_name ); ?>
+					<?php endif; ?>
+					</p>
+				<?php endif; ?>
+				<?php if ( $reviewer instanceof WP_User ) : ?>
+					<p><strong><?php esc_html_e( 'راجع المحتوى:', 'alborsa' ); ?></strong> <?php echo esc_html( $reviewer->display_name ); ?></p>
+				<?php endif; ?>
+				<?php if ( '' !== $last_reviewed ) : ?>
+					<p><strong><?php esc_html_e( 'تاريخ المراجعة:', 'alborsa' ); ?></strong> <time datetime="<?php echo esc_attr( $last_reviewed ); ?>"><?php echo esc_html( $last_reviewed ); ?></time></p>
+				<?php endif; ?>
+				<?php if ( '' !== $disclosure ) : ?>
+					<p><?php echo esc_html( $disclosure ); ?></p>
+				<?php endif; ?>
 				<p><?php esc_html_e( 'هذا المحتوى إعلامي وتعليمي ولا يمثل نصيحة مالية شخصية. تحقق من المصدر والوقت وملاءمة القرار لوضعك.', 'alborsa' ); ?></p>
 			</aside>
 		</div>

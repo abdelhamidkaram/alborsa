@@ -16,7 +16,7 @@ if ( ! \defined( 'ABSPATH' ) ) {
 /**
  * Return a bounded list of published assets without claiming quote availability.
  *
- * @return list<array{title: string, symbol: string, url: string}>
+ * @return list<array{id: int, title: string, symbol: string, url: string}>
  */
 function assets(): array {
 	if ( ! post_type_exists( 'alb_asset' ) ) {
@@ -47,6 +47,7 @@ function assets(): array {
 		}
 
 		$market_assets[] = array(
+			'id'     => $asset->ID,
 			'title'  => get_the_title( $asset ),
 			'symbol' => (string) get_post_meta( $asset->ID, 'alb_canonical_symbol', true ),
 			'url'    => $asset_url,
