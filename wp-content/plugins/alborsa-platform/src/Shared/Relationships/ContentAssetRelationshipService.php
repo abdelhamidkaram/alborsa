@@ -19,7 +19,7 @@ final class ContentAssetRelationshipService {
 	public const MENTIONS = 'mentions';
 	public const ANALYZES = 'analyzes';
 
-	private const CONTENT_TYPES = array(
+	public const CONTENT_TYPES = array(
 		'post',
 		EditorialModule::ANALYSIS_POST_TYPE,
 		EditorialModule::GUIDE_POST_TYPE,
@@ -60,7 +60,7 @@ final class ContentAssetRelationshipService {
 	 * @return list<array<string, mixed>>|WP_Error
 	 */
 	public function for_content( \WP_Post $content ): array|WP_Error {
-		if ( ! $this->is_supported_content( $content ) ) {
+		if ( ! $this->supports_content( $content ) ) {
 			return $this->invalid_content_error();
 		}
 
@@ -78,12 +78,16 @@ final class ContentAssetRelationshipService {
 		return $this->repository->find_by_target( $asset->ID, AssetsModule::POST_TYPE );
 	}
 
+	public function supports_content( \WP_Post $content ): bool {
+		return $content->ID > 0 && in_array( $content->post_type, self::CONTENT_TYPES, true );
+	}
+
 	private function validation_error(
 		\WP_Post $content,
 		\WP_Post $asset,
 		string $relation_type
 	): ?WP_Error {
-		if ( ! $this->is_supported_content( $content ) ) {
+		if ( ! $this->supports_content( $content ) ) {
 			return $this->invalid_content_error();
 		}
 
@@ -99,10 +103,6 @@ final class ContentAssetRelationshipService {
 		}
 
 		return null;
-	}
-
-	private function is_supported_content( \WP_Post $content ): bool {
-		return $content->ID > 0 && in_array( $content->post_type, self::CONTENT_TYPES, true );
 	}
 
 	private function is_asset( \WP_Post $asset ): bool {

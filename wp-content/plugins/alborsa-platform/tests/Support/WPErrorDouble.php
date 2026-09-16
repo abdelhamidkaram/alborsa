@@ -26,16 +26,19 @@ class WPErrorDouble {
 	 * @var string
 	 */
 	protected string $message = '';
+	protected mixed $data     = null;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param string|int $code Error code.
 	 * @param string     $message Error message.
+	 * @param mixed      $data Error data.
 	 */
-	public function __construct( string|int $code = '', string $message = '' ) {
+	public function __construct( string|int $code = '', string $message = '', mixed $data = null ) {
 		$this->code    = $code;
 		$this->message = $message;
+		$this->data    = $data;
 	}
 
 	/**
@@ -54,6 +57,10 @@ class WPErrorDouble {
 	 */
 	public function get_error_message(): string {
 		return $this->message;
+	}
+
+	public function get_error_data(): mixed {
+		return $this->data;
 	}
 }
 

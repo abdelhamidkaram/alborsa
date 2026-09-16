@@ -16,11 +16,15 @@ class WPPostDouble {
 	public int $ID;
 	public string $post_type;
 	public string $post_name;
+	public string $post_status;
+	public string $post_content;
 
 	public function __construct( object $post ) {
-		$this->ID        = (int) $post->ID;
-		$this->post_type = (string) $post->post_type;
-		$this->post_name = (string) $post->post_name;
+		$this->ID           = (int) $post->ID;
+		$this->post_type    = (string) $post->post_type;
+		$this->post_name    = (string) $post->post_name;
+		$this->post_status  = property_exists( $post, 'post_status' ) ? (string) $post->post_status : 'publish';
+		$this->post_content = property_exists( $post, 'post_content' ) ? (string) $post->post_content : '';
 	}
 }
 

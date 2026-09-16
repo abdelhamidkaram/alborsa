@@ -25,6 +25,7 @@ final class AssetsModuleTest extends UnitTestCase {
 		$module->register();
 
 		self::assertSame( 10, has_action( 'init', AssetsModule::class . '->initialize()' ) );
+		self::assertSame( 10, has_action( 'rest_api_init', AssetsModule::class . '->register_rest_routes()' ) );
 		self::assertSame( 10, has_filter( 'post_type_link', AssetsModule::class . '->asset_permalink()' ) );
 		self::assertSame( 10, has_filter( 'query_vars', AssetsModule::class . '->register_route_query_var()' ) );
 		self::assertSame( 10, has_filter( 'request', AssetsModule::class . '->constrain_asset_route()' ) );

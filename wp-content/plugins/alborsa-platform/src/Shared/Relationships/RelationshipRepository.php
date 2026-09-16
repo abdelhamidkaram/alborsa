@@ -18,6 +18,8 @@ defined( 'ABSPATH' ) || exit;
  * Minimal repository for the existing relationships table.
  */
 final class RelationshipRepository {
+	private const READ_LIMIT = 100;
+
 	private \wpdb $wpdb;
 
 	public function __construct( \wpdb $wpdb ) {
@@ -103,10 +105,11 @@ final class RelationshipRepository {
 		}
 
 		$query = $this->wpdb->prepare(
-			'SELECT id, from_object_id, from_object_type, to_object_id, to_object_type, relation_type, sort_order, created_at FROM %i WHERE from_object_id = %d AND from_object_type = %s ORDER BY sort_order ASC, id ASC',
+			'SELECT id, from_object_id, from_object_type, to_object_id, to_object_type, relation_type, sort_order, created_at FROM %i WHERE from_object_id = %d AND from_object_type = %s ORDER BY sort_order ASC, id ASC LIMIT %d',
 			$this->table_name(),
 			$validated['object_id'],
-			$validated['object_type']
+			$validated['object_type'],
+			self::READ_LIMIT
 		);
 
 		return $this->read_results( $query );
@@ -125,10 +128,11 @@ final class RelationshipRepository {
 		}
 
 		$query = $this->wpdb->prepare(
-			'SELECT id, from_object_id, from_object_type, to_object_id, to_object_type, relation_type, sort_order, created_at FROM %i WHERE to_object_id = %d AND to_object_type = %s ORDER BY sort_order ASC, id ASC',
+			'SELECT id, from_object_id, from_object_type, to_object_id, to_object_type, relation_type, sort_order, created_at FROM %i WHERE to_object_id = %d AND to_object_type = %s ORDER BY sort_order ASC, id ASC LIMIT %d',
 			$this->table_name(),
 			$validated['object_id'],
-			$validated['object_type']
+			$validated['object_type'],
+			self::READ_LIMIT
 		);
 
 		return $this->read_results( $query );

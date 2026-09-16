@@ -55,6 +55,8 @@
 
 نوع الأصل والسوق والقطاع تسند كـTerms من `alb_asset_type` و`alb_exchange` و`alb_sector`، ولا تتكرر كحقول Meta.
 
+تظهر الحقول العامة الستة والتصنيفات في مساري القراءة المخصصين `GET /wp-json/alborsa/v1/assets` و`GET /wp-json/alborsa/v1/assets/{id}`. لا يعرض العقد المخصص `_alb_provider_mappings`، ويقتصر مسار التفاصيل على علاقات `mentions` و`analyzes` ذات المحتوى المنشور.
+
 ### خريطة المزودين
 
 قائمة Records، كل Record يحتوي:

@@ -126,6 +126,7 @@ final class RelationshipRepositoryTest extends UnitTestCase {
 		);
 		self::assertStringContainsString( "from_object_type = 'post'", (string) $wpdb->last_query );
 		self::assertStringContainsString( 'ORDER BY sort_order ASC, id ASC', (string) $wpdb->last_query );
+		self::assertStringContainsString( 'LIMIT 100', (string) $wpdb->last_query );
 
 		$target_rows = $repository->find_by_target( 20, 'alb_asset' );
 		self::assertCount( 2, $target_rows );

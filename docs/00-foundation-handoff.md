@@ -9,6 +9,7 @@
 - Six taxonomies are registered with admin and core REST support: `alb_topic`, `alb_guide_level`, `alb_guide_track`, `alb_asset_type`, `alb_exchange`, and `alb_sector`. Their public archives and rewrite rules remain disabled until URL contracts are approved.
 - Asset singles use the approved `/aswaq/tadawul/{symbol}/` route for assets classified as `stock` on the `tadawul` exchange and `/forex/{pair}/` for assets classified as `forex`. Route queries enforce those classifications to prevent duplicate cross-route URLs; other asset classes keep WordPress query permalinks until their routes are approved.
 - `AssetMeta` registers six public, single-value fields (`alb_canonical_symbol`, `alb_base_currency`, `alb_quote_currency`, `alb_isin`, `alb_official_website`, `alb_listing_status`) with sanitizers and per-post edit authorization. The structured `_alb_provider_mappings` field is protected and excluded from core REST responses.
+- `AssetsModule` exposes read-only `GET /wp-json/alborsa/v1/assets` and `GET /wp-json/alborsa/v1/assets/{id}` routes. They return published assets only, cap collection requests at 100 items and page 1000, support search plus asset-type/exchange filters, omit protected provider mappings, and include published related content on detail responses.
 - The plugin-root `wpml-config.xml` makes the three implemented post types and six taxonomies translatable in Polylang and keeps all seven neutral asset fields synchronized with `copy` semantics.
 - Content registration and permalink behavior are covered by isolated tests; a live WordPress integration pass with Polylang and Yoast remains required on Staging.
 - The bounded database migration for Phase 2 relationships (`{$wpdb->prefix}alb_relationships`, e.g. `wp_alb_relationships` on a single-site installation) is implemented.
@@ -24,8 +25,8 @@
 
 ## Not implemented
 
-- Other product modules, remaining custom post types and taxonomies, editorial workflow/statuses and metadata, custom REST routes, or remaining feature tables (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
-- `RelationshipRepository` persists, deletes, and reads exact relationships. `ContentAssetRelationshipService` now validates `WP_Post` object roles and allows `mentions`/`analyzes` links from posts, analyses, and guides to assets; it has no admin UI or REST write route yet. D-002 approves Arabic on `/` and English under `/en/`; the remaining entity registration, custom REST routes, caching, and UI integration remain unimplemented.
+- Other product modules, remaining custom post types and taxonomies, editorial workflow/statuses and metadata, remaining custom REST routes, or remaining feature tables (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
+- `RelationshipRepository` persists, deletes, and reads exact relationships with a 100-row read cap. `ContentAssetRelationshipService` validates `WP_Post` object roles and allows `mentions`/`analyzes` links from posts, analyses, and guides to assets; it has no admin UI or REST write route yet. D-002 approves Arabic on `/` and English under `/en/`; the remaining entity registration, write routes, caching, and UI integration remain unimplemented.
 - Market providers, user accounts, watchlists, or alerts.
 - Theme work, frontend design, CSS, or layouts.
 

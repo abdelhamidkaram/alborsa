@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Alborsa\Platform\Modules\Assets;
 
 use Alborsa\Platform\Foundation\Module;
+use Alborsa\Platform\Shared\Relationships\ContentAssetRelationshipService;
+use Alborsa\Platform\Shared\Relationships\RelationshipRepository;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,9 +27,21 @@ final class AssetsModule implements Module {
 
 	public function register(): void {
 		add_action( 'init', array( $this, 'initialize' ) );
+		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 		add_filter( 'post_type_link', array( $this, 'asset_permalink' ), 10, 3 );
 		add_filter( 'query_vars', array( $this, 'register_route_query_var' ) );
 		add_filter( 'request', array( $this, 'constrain_asset_route' ) );
+	}
+
+	public function register_rest_routes(): void {
+		global $wpdb;
+
+		if ( ! $wpdb instanceof \wpdb ) {
+			return;
+		}
+
+		$relationships = new ContentAssetRelationshipService( new RelationshipRepository( $wpdb ) );
+		( new AssetRestController( new AssetPresenter( $relationships ) ) )->register_routes();
 	}
 
 	public function initialize(): void {
