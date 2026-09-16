@@ -16,6 +16,8 @@
 - `EditorialModule` يسجل `alb_analysis` و`alb_guide` كنوعي محتوى عامين مع REST القياسي والمراجعات، على `/tahleel/` و`/taleem/`.
 - `EditorialModule` يسجل أيضاً `alb_topic` و`alb_guide_level` و`alb_guide_track`، بينما يسجل `AssetsModule` نوع `alb_asset` وتصنيفات `alb_asset_type` و`alb_exchange` و`alb_sector`.
 - مسارا الأصول المعتمدان يفرضان التصنيف في Query: `stock` مع `tadawul` لمسار `/aswaq/tadawul/`، و`forex` لمسار `/forex/`. أرشيفات التصنيفات وPretty permalinks لبقية أنواع الأصول غير مفعلة قبل اعتماد عقودها.
+- `AssetMeta` يسجل حقول الهوية الثابتة مع Sanitization وAuthorization. الحقول العامة الستة متاحة في REST القياسي، بينما `_alb_provider_mappings` حقل protected لا يظهر فيه.
+- `wpml-config.xml` في جذر الإضافة يفرض ترجمة الأنواع والتصنيفات المنفذة ومزامنة حقول الأصل المحايدة فقط باستخدام `copy`.
 - `RewriteRules` يؤخر Soft Flush إلى أولوية `999` من `init` وينفذه مرة واحدة بحسب إصدار مستقل، حتى تكون كل قواعد الوحدات مسجلة أولاً.
 - قفل مؤقت باسم `alborsa_platform_migration_lock` يمنع تشغيل migration متزامنة، ويُحذف عند التعطيل بدون حذف الإصدار أو الصلاحيات.
 - Capability باسم `manage_alborsa_platform` تضاف إلى `administrator` فقط.

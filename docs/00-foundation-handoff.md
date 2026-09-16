@@ -8,6 +8,8 @@
 - The `Foundation`, `Editorial`, and `Assets` modules are wired. Editorial registers the public `alb_analysis` and `alb_guide` post types with the approved `/tahleel/` and `/taleem/` rewrite bases. Assets registers `alb_asset` without a generic archive.
 - Six taxonomies are registered with admin and core REST support: `alb_topic`, `alb_guide_level`, `alb_guide_track`, `alb_asset_type`, `alb_exchange`, and `alb_sector`. Their public archives and rewrite rules remain disabled until URL contracts are approved.
 - Asset singles use the approved `/aswaq/tadawul/{symbol}/` route for assets classified as `stock` on the `tadawul` exchange and `/forex/{pair}/` for assets classified as `forex`. Route queries enforce those classifications to prevent duplicate cross-route URLs; other asset classes keep WordPress query permalinks until their routes are approved.
+- `AssetMeta` registers six public, single-value fields (`alb_canonical_symbol`, `alb_base_currency`, `alb_quote_currency`, `alb_isin`, `alb_official_website`, `alb_listing_status`) with sanitizers and per-post edit authorization. The structured `_alb_provider_mappings` field is protected and excluded from core REST responses.
+- The plugin-root `wpml-config.xml` makes the three implemented post types and six taxonomies translatable in Polylang and keeps all seven neutral asset fields synchronized with `copy` semantics.
 - Content registration and permalink behavior are covered by isolated tests; a live WordPress integration pass with Polylang and Yoast remains required on Staging.
 - The bounded database migration for Phase 2 relationships (`{$wpdb->prefix}alb_relationships`, e.g. `wp_alb_relationships` on a single-site installation) is implemented.
 - Schema version `1` adds administrator capability `manage_alborsa_platform`.
@@ -21,7 +23,7 @@
 
 ## Not implemented
 
-- Other product modules, remaining custom post types and taxonomies, custom REST routes, or remaining feature tables (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
+- Other product modules, remaining custom post types and taxonomies, editorial metadata, custom REST routes, or remaining feature tables (`alb_market_quotes`, `alb_affiliate_links`, `alb_affiliate_clicks`).
 - A minimal internal `RelationshipRepository` now persists, deletes, and reads exact relationships from the existing table; it is not wired as a module or API. D-002 approves Arabic on `/` and English under `/en/`; the remaining entity registration, custom REST routes, caching, and relationship product integration remain unimplemented.
 - Market providers, user accounts, watchlists, or alerts.
 - Theme work, frontend design, CSS, or layouts.

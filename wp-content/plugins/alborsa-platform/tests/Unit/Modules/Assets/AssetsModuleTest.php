@@ -18,6 +18,7 @@ final class AssetsModuleTest extends UnitTestCase {
 	public function test_registration_defers_content_model_until_init(): void {
 		Functions\expect( 'register_post_type' )->never();
 		Functions\expect( 'register_taxonomy' )->never();
+		Functions\expect( 'register_post_meta' )->never();
 		Functions\expect( 'add_rewrite_rule' )->never();
 
 		$module = new AssetsModule();
@@ -52,6 +53,7 @@ final class AssetsModuleTest extends UnitTestCase {
 				$rewrite_rules[ $regex ] = array( $query, $position );
 			}
 		);
+		Functions\when( 'register_post_meta' )->justReturn( true );
 
 		( new AssetsModule() )->initialize();
 
@@ -196,7 +198,7 @@ final class AssetsModuleTest extends UnitTestCase {
 		self::assertFalse( $arguments['rewrite'] );
 		self::assertTrue( $arguments['show_ui'] );
 		self::assertTrue( $arguments['show_in_rest'] );
-		self::assertSame( array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions' ), $arguments['supports'] );
+		self::assertSame( array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions', 'custom-fields' ), $arguments['supports'] );
 		self::assertFalse( $arguments['hierarchical'] );
 		self::assertSame( 'post', $arguments['capability_type'] );
 		self::assertTrue( $arguments['map_meta_cap'] );

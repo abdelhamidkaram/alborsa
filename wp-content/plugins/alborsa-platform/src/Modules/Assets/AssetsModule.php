@@ -33,6 +33,7 @@ final class AssetsModule implements Module {
 	public function initialize(): void {
 		$this->register_post_type();
 		$this->register_taxonomies();
+		( new AssetMeta() )->register();
 		$this->register_rewrite_rules();
 	}
 
@@ -46,7 +47,7 @@ final class AssetsModule implements Module {
 				'rewrite'         => false,
 				'show_ui'         => true,
 				'show_in_rest'    => true,
-				'supports'        => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions' ),
+				'supports'        => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions', 'custom-fields' ),
 				'hierarchical'    => false,
 				'capability_type' => 'post',
 				'map_meta_cap'    => true,

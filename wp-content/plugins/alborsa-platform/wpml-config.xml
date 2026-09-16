@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wpml-config>
+	<custom-fields>
+		<custom-field action="copy">alb_canonical_symbol</custom-field>
+		<custom-field action="copy">alb_base_currency</custom-field>
+		<custom-field action="copy">alb_quote_currency</custom-field>
+		<custom-field action="copy">alb_isin</custom-field>
+		<custom-field action="copy">alb_official_website</custom-field>
+		<custom-field action="copy">alb_listing_status</custom-field>
+		<custom-field action="copy">_alb_provider_mappings</custom-field>
+	</custom-fields>
+	<custom-types>
+		<custom-type translate="1">alb_analysis</custom-type>
+		<custom-type translate="1">alb_guide</custom-type>
+		<custom-type translate="1">alb_asset</custom-type>
+	</custom-types>
+	<taxonomies>
+		<taxonomy translate="1">alb_topic</taxonomy>
+		<taxonomy translate="1">alb_guide_level</taxonomy>
+		<taxonomy translate="1">alb_guide_track</taxonomy>
+		<taxonomy translate="1">alb_asset_type</taxonomy>
+		<taxonomy translate="1">alb_exchange</taxonomy>
+		<taxonomy translate="1">alb_sector</taxonomy>
+	</taxonomies>
+</wpml-config>

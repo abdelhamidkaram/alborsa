@@ -46,12 +46,12 @@
 
 ### تعريف ثابت
 
-- `canonical_symbol`
-- `base_currency`
-- `quote_currency`
-- `isin`
-- `official_website`
-- `listing_status`
+- `alb_canonical_symbol` — منفذ ومتاح في REST القياسي.
+- `alb_base_currency` — منفذ ومتاح في REST القياسي.
+- `alb_quote_currency` — منفذ ومتاح في REST القياسي.
+- `alb_isin` — منفذ ومتاح في REST القياسي.
+- `alb_official_website` — منفذ ومتاح في REST القياسي.
+- `alb_listing_status` — منفذ ومتاح في REST القياسي؛ قائمة الحالات النهائية لم تعتمد بعد، لذلك يقتصر التنفيذ الحالي على مفتاح منظم بطول أقصى 32 حرفاً.
 
 نوع الأصل والسوق والقطاع تسند كـTerms من `alb_asset_type` و`alb_exchange` و`alb_sector`، ولا تتكرر كحقول Meta.
 
@@ -66,6 +66,8 @@
 - `attribution_label`
 - `attribution_url`
 - `enabled`
+
+الخريطة منفذة في protected post meta باسم `_alb_provider_mappings`. تتحقق من `provider_key` و`provider_symbol`، وتُطبّع القدرات ومدة التأخير وبيانات الإسناد وحالة التفعيل، ولا تظهر في REST القياسي حتى لا تُكشف مفاتيح المزودين الداخلية.
 
 ### حقول تحريرية قابلة للترجمة
 

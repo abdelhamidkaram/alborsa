@@ -12,10 +12,11 @@ The theme-independent product foundation for alborsa.net. Health check: `wp albo
 This source release contains the Foundation, Editorial, and Assets modules. It
 provides bootstrap, module registration, migrations, conservative capabilities,
 dependency diagnostics, Site Health integration, the `wp alborsa health`
-command, analyses, guides, assets, and their core taxonomies.
+command, analyses, guides, assets, their core taxonomies, validated asset
+metadata, and selective Polylang field synchronization.
 
-It does not yet register asset metadata, custom REST routes, market providers,
-user accounts, watchlists, alerts, frontend layouts, CSS, or theme templates.
+It does not yet register custom REST routes, market providers, user accounts,
+watchlists, alerts, frontend layouts, CSS, or theme templates.
 
 == Installation ==
 
