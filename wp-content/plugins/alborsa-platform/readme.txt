@@ -16,6 +16,8 @@ command, analyses, guides, assets, their core taxonomies, validated asset
 metadata, validated content-to-asset relationships, and selective Polylang field
 synchronization. It also exposes bounded, read-only public REST routes for the
 published asset collection and asset details with published related content.
+The `wp alborsa assets import <file> [--dry-run]` command provides bounded,
+language-explicit CSV imports with row reports and duplicate prevention.
 
 It does not yet register market-data or write REST routes, market providers,
 user accounts, watchlists, alerts, frontend layouts, CSS, or theme templates.

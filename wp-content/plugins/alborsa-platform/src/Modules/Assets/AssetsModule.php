@@ -49,6 +49,7 @@ final class AssetsModule implements Module {
 		$this->register_taxonomies();
 		( new AssetMeta() )->register();
 		$this->register_rewrite_rules();
+		$this->register_cli();
 	}
 
 	public function register_post_type(): void {
@@ -153,6 +154,23 @@ final class AssetsModule implements Module {
 		}
 
 		return null;
+	}
+
+	private function register_cli(): void {
+		if ( ! defined( 'WP_CLI' ) || ! WP_CLI || ! class_exists( 'WP_CLI' ) ) {
+			return;
+		}
+
+		$assets   = new AssetUpsertService( new AssetMeta(), new PolylangAssetLanguageGateway() );
+		$importer = new AssetCsvImporter( new AssetCsvReader(), $assets );
+
+		\WP_CLI::add_command(
+			'alborsa assets import',
+			new AssetImportCommand( $importer ),
+			array(
+				'shortdesc' => __( 'Imports financial assets from CSV.', 'alborsa-platform' ),
+			)
+		);
 	}
 
 	/**
