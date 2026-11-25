@@ -108,7 +108,7 @@ function news_url(): string {
 		}
 	}
 
-	return section_url( 'akhabar' );
+	return section_url( 'news' );
 }
 
 /**

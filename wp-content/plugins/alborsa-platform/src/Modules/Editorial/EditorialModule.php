@@ -30,6 +30,9 @@ final class EditorialModule implements Module {
 		$meta = new EditorialMeta();
 		$meta->register();
 		( new EditorialAdminMetaBox( $meta ) )->register();
+		$static_page_meta = new StaticPageMeta();
+		$static_page_meta->register();
+		( new StaticPageAdminMetaBox( $static_page_meta ) )->register();
 		$this->register_cli( $meta );
 	}
 

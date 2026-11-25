@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use function Alborsa\Theme\NewsContent\archive_page_number;
 use function Alborsa\Theme\NewsContent\archive_query;
 use function Alborsa\Theme\NewsContent\archive_topics;
 use function Alborsa\Theme\NewsContent\asset_tags;
@@ -22,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$current_page   = (int) max( 1, get_query_var( 'paged' ), get_query_var( 'page' ) );
+$current_page   = archive_page_number();
 $selected_type  = selected_type();
 $selected_topic = selected_topic();
 $news_query     = archive_query( $current_page, $selected_type, $selected_topic );
@@ -87,9 +88,11 @@ $type_tabs      = array(
 					<?php endforeach; ?>
 
 					<?php
-					$pagination = paginate_links(
+					$pagination_url = filter_url( $selected_type, $selected_topic );
+					$pagination     = paginate_links(
 						array(
-							'base'      => str_replace( 999999999, '%#%', esc_url( get_pagenum_link( 999999999 ) ) ),
+							'base'      => $pagination_url . '%_%',
+							'format'    => ( str_contains( $pagination_url, '?' ) ? '&' : '?' ) . 'news_page=%#%',
 							'current'   => $current_page,
 							'total'     => max( 1, (int) $news_query->max_num_pages ),
 							'mid_size'  => 1,

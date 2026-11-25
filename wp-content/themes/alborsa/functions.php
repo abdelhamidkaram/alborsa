@@ -22,6 +22,8 @@ require_once ALBORSA_THEME_PATH . '/inc/market-status.php';
 require_once ALBORSA_THEME_PATH . '/inc/home-content.php';
 require_once ALBORSA_THEME_PATH . '/inc/content.php';
 require_once ALBORSA_THEME_PATH . '/inc/news-content.php';
+require_once ALBORSA_THEME_PATH . '/inc/static-pages.php';
 
 Alborsa\Theme\Setup\register_hooks();
 Alborsa\Theme\Assets\register_hooks();
+Alborsa\Theme\StaticPages\register_hooks();

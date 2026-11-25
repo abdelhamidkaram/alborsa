@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 use function Alborsa\Theme\Content\post_type_label;
 use function Alborsa\Theme\Content\term_names;
+use function Alborsa\Theme\NewsContent\mark_investor_heading;
 use function Alborsa\Theme\NewsContent\provenance;
 use function Alborsa\Theme\NewsContent\reading_minutes;
 use function Alborsa\Theme\NewsContent\reading_label;
@@ -21,12 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 while ( have_posts() ) :
 	the_post();
-	$article      = get_post();
-	$topics       = term_names( $article->ID, 'alb_topic' );
-	$reading_time = reading_minutes( $article );
-	$provenance   = provenance( $article );
-	$related      = related_posts( $article );
-	$excerpt      = trim( (string) get_the_excerpt( $article ) );
+	$article       = get_post();
+	$topics        = term_names( $article->ID, 'alb_topic' );
+	$reading_time  = reading_minutes( $article );
+	$provenance    = provenance( $article );
+	$related       = related_posts( $article );
+	$excerpt       = trim( (string) get_the_excerpt( $article ) );
+	$investor_note = post_password_required( $article ) ? '' : (string) get_post_meta( $article->ID, 'alb_investor_note', true );
 	?>
 	<article <?php post_class( 'news-article' ); ?>>
 		<div class="site-container news-article__shell">
@@ -74,7 +76,22 @@ while ( have_posts() ) :
 			<?php endif; ?>
 
 			<div class="entry-content news-article__body">
-				<?php the_content(); ?>
+				<?php
+				$investor_heading_filter = mark_investor_heading( ... );
+				if ( '' === $investor_note ) {
+					add_filter( 'the_content', $investor_heading_filter, 20 );
+				}
+				the_content();
+				remove_filter( 'the_content', $investor_heading_filter, 20 );
+				?>
+
+				<?php if ( '' !== $investor_note ) : ?>
+					<section class="news-investor-note" aria-labelledby="news-investor-title">
+						<h2 class="news-investor-heading" id="news-investor-title"><?php esc_html_e( 'ماذا يعني هذا للمستثمر؟', 'alborsa' ); ?></h2>
+						<?php echo wp_kses_post( wpautop( esc_html( $investor_note ) ) ); ?>
+					</section>
+				<?php endif; ?>
+
 				<?php
 				wp_link_pages(
 					array(

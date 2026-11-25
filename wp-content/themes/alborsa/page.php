@@ -15,6 +15,11 @@ get_header();
 
 while ( have_posts() ) :
 	the_post();
+
+	if ( Alborsa\Theme\StaticPages\is_static_page( get_the_ID() ) ) {
+		get_template_part( 'template-parts/content/static-page' );
+		continue;
+	}
 	?>
 	<article <?php post_class( 'standard-page' ); ?>>
 		<header class="section-hero">

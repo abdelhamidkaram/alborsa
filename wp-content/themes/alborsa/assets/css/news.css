@@ -430,11 +430,11 @@
 }
 
 .news-article__header h1 {
-	max-width: 19ch;
-	font-size: clamp(2.25rem, 4.3vw, 3.6rem);
+	max-inline-size: 32rem;
+	font-size: clamp(2rem, 3.25vw, 2.75rem);
 	font-weight: var(--font-weight-black);
-	letter-spacing: -0.025em;
 	line-height: 1.25;
+	overflow-wrap: anywhere;
 }
 
 .news-article__dek {
@@ -529,9 +529,10 @@
 	line-height: 1.9;
 }
 
-.news-article__body > :where(p, ul, ol, blockquote) {
-	max-width: 70ch;
-	margin-inline-start: auto;
+.news-article__body > :where(p, ul, ol, blockquote),
+.news-investor-note > p {
+	max-inline-size: 70ch;
+	margin-inline: 0 auto;
 }
 
 .news-article__body :where(h2, h3) {
@@ -542,6 +543,35 @@
 
 .news-article__body h2 {
 	font-size: 1.55rem;
+}
+
+.news-article__body .news-investor-heading {
+	padding-block-end: 0;
+	border-block-end: 0;
+}
+
+.news-article__body .news-investor-heading::after {
+	display: block;
+	aspect-ratio: 1064 / 23;
+	min-block-size: 0.625rem;
+	margin-block-start: var(--space-4);
+	background: url("../images/news-investor-divider.svg") center / 100% 100% no-repeat;
+	filter: var(--news-divider-filter, none);
+	mix-blend-mode: var(--news-divider-blend, normal);
+	content: "";
+}
+
+/* The exported SVG has light paper baked into its raster pattern. */
+:root[data-theme="dark"] .news-article {
+	--news-divider-filter: invert(1) contrast(1.1);
+	--news-divider-blend: screen;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme]) .news-article {
+		--news-divider-filter: invert(1) contrast(1.1);
+		--news-divider-blend: screen;
+	}
 }
 
 .news-provenance,

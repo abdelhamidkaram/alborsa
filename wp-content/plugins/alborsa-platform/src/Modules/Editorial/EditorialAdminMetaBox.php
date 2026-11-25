@@ -20,6 +20,9 @@ final class EditorialAdminMetaBox {
 	private const FORM_KEY     = 'alborsa_editorial';
 	private const POST_TYPES   = array( 'post', EditorialModule::ANALYSIS_POST_TYPE, EditorialModule::GUIDE_POST_TYPE );
 
+	private const INVESTOR_NONCE_ACTION = 'alborsa_platform_save_investor_note';
+	private const INVESTOR_NONCE_NAME   = 'alborsa_platform_investor_note_nonce';
+
 	public function __construct( private EditorialMeta $meta ) {
 	}
 
@@ -29,6 +32,8 @@ final class EditorialAdminMetaBox {
 		foreach ( self::POST_TYPES as $post_type ) {
 			add_action( 'save_post_' . $post_type, array( $this, 'save' ), 10, 2 );
 		}
+
+		add_action( 'save_post_post', array( $this, 'save_investor_note' ) );
 	}
 
 	public function add_meta_boxes(): void {
@@ -42,6 +47,15 @@ final class EditorialAdminMetaBox {
 				'default'
 			);
 		}
+
+		add_meta_box(
+			'alborsa-investor-note',
+			__( 'ماذا يعني هذا للمستثمر؟', 'alborsa-platform' ),
+			array( $this, 'render_investor_note' ),
+			'post',
+			'normal',
+			'default'
+		);
 	}
 
 	public function render( \WP_Post $post ): void {
@@ -51,15 +65,37 @@ final class EditorialAdminMetaBox {
 		$this->render_input( $post, EditorialMeta::REVIEWER_ID, __( 'Reviewer user ID', 'alborsa-platform' ), 'number' );
 		$this->render_input( $post, EditorialMeta::LAST_REVIEWED_AT, __( 'Last reviewed (YYYY-MM-DD)', 'alborsa-platform' ), 'date' );
 
-		$value = get_post_meta( $post->ID, EditorialMeta::DISCLOSURE, true );
-		$value = is_scalar( $value ) ? (string) $value : '';
-		printf(
-			'<p><label for="%1$s"><strong>%2$s</strong></label><textarea class="widefat" id="%1$s" name="%3$s[%1$s]" rows="4">%4$s</textarea></p>',
-			esc_attr( EditorialMeta::DISCLOSURE ),
-			esc_html__( 'Disclosure', 'alborsa-platform' ),
-			esc_attr( self::FORM_KEY ),
-			esc_textarea( $value )
-		);
+		$this->render_textarea( $post, EditorialMeta::DISCLOSURE, __( 'Disclosure', 'alborsa-platform' ), self::FORM_KEY . '[' . EditorialMeta::DISCLOSURE . ']' );
+	}
+
+	public function render_investor_note( \WP_Post $post ): void {
+		wp_nonce_field( self::INVESTOR_NONCE_ACTION, self::INVESTOR_NONCE_NAME, false );
+		$this->render_textarea( $post, EditorialMeta::INVESTOR_NOTE, __( 'نص القسم', 'alborsa-platform' ), EditorialMeta::INVESTOR_NOTE );
+	}
+
+	public function save_investor_note( int $post_id ): void {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		$nonce = isset( $_POST[ self::INVESTOR_NONCE_NAME ] ) && is_string( $_POST[ self::INVESTOR_NONCE_NAME ] )
+			? sanitize_text_field( wp_unslash( $_POST[ self::INVESTOR_NONCE_NAME ] ) )
+			: '';
+
+		if ( ! wp_verify_nonce( $nonce, self::INVESTOR_NONCE_ACTION )
+			|| ! isset( $_POST[ EditorialMeta::INVESTOR_NOTE ] )
+			|| ! is_string( $_POST[ EditorialMeta::INVESTOR_NOTE ] ) ) {
+			return;
+		}
+
+		$investor_note = sanitize_textarea_field( wp_unslash( $_POST[ EditorialMeta::INVESTOR_NOTE ] ) );
+		$changed       = '' === $investor_note
+			? delete_post_meta( $post_id, EditorialMeta::INVESTOR_NOTE )
+			: update_post_meta( $post_id, EditorialMeta::INVESTOR_NOTE, wp_slash( $investor_note ) );
+
+		if ( $changed ) {
+			( new AuditLog() )->record( 'investor_note_updated', 'post', $post_id );
+		}
 	}
 
 	public function save( int $post_id, \WP_Post $post ): void {
@@ -104,6 +140,18 @@ final class EditorialAdminMetaBox {
 			esc_attr( self::FORM_KEY ),
 			esc_attr( $type ),
 			esc_attr( $value )
+		);
+	}
+
+	private function render_textarea( \WP_Post $post, string $meta_key, string $label, string $field_name ): void {
+		$value = get_post_meta( $post->ID, $meta_key, true );
+		$value = is_scalar( $value ) ? (string) $value : '';
+		printf(
+			'<p><label for="%1$s"><strong>%2$s</strong></label><textarea class="widefat" id="%1$s" name="%3$s" rows="4">%4$s</textarea></p>',
+			esc_attr( $meta_key ),
+			esc_html( $label ),
+			esc_attr( $field_name ),
+			esc_textarea( $value )
 		);
 	}
 

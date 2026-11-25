@@ -36,9 +36,12 @@ final class EditorialMetaTest extends UnitTestCase {
 		( new EditorialMeta() )->register();
 
 		self::assertCount( 3, $registrations );
-		self::assertCount( 6, $registrations['post'] );
+		self::assertCount( 7, $registrations['post'] );
 		self::assertTrue( $registrations['post'][ EditorialMeta::SOURCE_URL ]['show_in_rest'] );
 		self::assertFalse( $registrations['post'][ EditorialMeta::RSS_ITEM_HASH ]['show_in_rest'] );
+		self::assertFalse( $registrations['post'][ EditorialMeta::INVESTOR_NOTE ]['show_in_rest'] );
+		self::assertArrayNotHasKey( EditorialMeta::INVESTOR_NOTE, $registrations['alb_analysis'] );
+		self::assertArrayNotHasKey( EditorialMeta::INVESTOR_NOTE, $registrations['alb_guide'] );
 	}
 
 	public function test_sanitizers_reject_invalid_dates_urls_and_hashes(): void {

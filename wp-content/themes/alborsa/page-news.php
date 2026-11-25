@@ -1,6 +1,6 @@
 <?php
 /**
- * News page fallback when /akhabar/ is configured as a regular page.
+ * News archive when /news/ is configured as a regular page.
  *
  * @package Alborsa
  */

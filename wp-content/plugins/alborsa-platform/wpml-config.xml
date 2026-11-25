@@ -24,6 +24,8 @@
 		<custom-field action="translate">alb_reviewer_id</custom-field>
 		<custom-field action="translate">alb_last_reviewed_at</custom-field>
 		<custom-field action="translate">alb_editorial_disclosure</custom-field>
+		<custom-field action="translate">alb_investor_note</custom-field>
+		<custom-field action="translate">alb_static_page_layout</custom-field>
 	</custom-fields>
 	<custom-types>
 		<custom-type translate="1">alb_analysis</custom-type>

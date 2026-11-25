@@ -52,7 +52,7 @@ function enqueue_assets(): void {
 		asset_version( '/assets/css/mobile-system.css' )
 	);
 
-	if ( is_home() || is_page( 'akhabar' ) || is_singular( 'post' ) ) {
+	if ( is_home() || is_page( 'news' ) || is_singular( 'post' ) ) {
 		wp_enqueue_style(
 			'alborsa-theme-news',
 			ALBORSA_THEME_URL . '/assets/css/news.css',

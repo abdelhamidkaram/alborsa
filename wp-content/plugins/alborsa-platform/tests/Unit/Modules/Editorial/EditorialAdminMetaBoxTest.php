@@ -27,6 +27,7 @@ final class EditorialAdminMetaBoxTest extends UnitTestCase {
 		Functions\when( 'sanitize_key' )->alias( static fn( string $value ): string => strtolower( $value ) );
 		Functions\when( 'esc_url_raw' )->returnArg();
 		Functions\when( 'wp_unslash' )->returnArg();
+		Functions\when( 'wp_slash' )->returnArg();
 		Functions\when( 'get_option' )->justReturn( array() );
 		Functions\when( 'update_option' )->justReturn( true );
 		Functions\when( 'get_current_user_id' )->justReturn( 1 );
@@ -84,5 +85,26 @@ final class EditorialAdminMetaBoxTest extends UnitTestCase {
 		self::assertSame( 7, $stored[ EditorialMeta::REVIEWER_ID ] );
 		self::assertSame( '2026-09-16', $stored[ EditorialMeta::LAST_REVIEWED_AT ] );
 		self::assertSame( 'Editorial disclosure', $stored[ EditorialMeta::DISCLOSURE ] );
+	}
+
+	public function test_investor_note_saves_without_a_provenance_form(): void {
+		$saved_note = null;
+		Functions\when( 'current_user_can' )->justReturn( true );
+		Functions\expect( 'wp_verify_nonce' )->once()->with( 'valid', 'alborsa_platform_save_investor_note' )->andReturn( 1 );
+		Functions\when( 'update_post_meta' )->alias(
+			static function ( int $post_id, string $meta_key, string $value ) use ( &$saved_note ): int {
+				$saved_note = array( $post_id, $meta_key, $value );
+				return 1;
+			}
+		);
+
+		$_POST = array(
+			'alborsa_platform_investor_note_nonce' => 'valid',
+			EditorialMeta::INVESTOR_NOTE           => " Investor note.\nSecond line. ",
+		);
+
+		( new EditorialAdminMetaBox( new EditorialMeta() ) )->save_investor_note( 50 );
+
+		self::assertSame( array( 50, EditorialMeta::INVESTOR_NOTE, "Investor note.\nSecond line." ), $saved_note );
 	}
 }

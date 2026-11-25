@@ -26,6 +26,47 @@ function selected_type(): string {
 }
 
 /**
+ * Mark the first investor section in rendered content without changing the saved article.
+ */
+function mark_investor_heading( string $content ): string {
+	$html = new \WP_HTML_Tag_Processor( $content );
+
+	while ( $html->next_tag() ) {
+		$tag = $html->get_tag();
+		if ( 'H2' !== $tag && 'H3' !== $tag ) {
+			continue;
+		}
+
+		$html->set_bookmark( 'heading' );
+		if ( is_investor_heading( $html, $tag ) && $html->seek( 'heading' ) ) {
+			$html->add_class( 'news-investor-heading' );
+			return $html->get_updated_html();
+		}
+	}
+
+	return $content;
+}
+
+/**
+ * Read heading text across inline formatting and HTML entities.
+ */
+function is_investor_heading( \WP_HTML_Tag_Processor $html, string $tag ): bool {
+	$heading_text = '';
+	while ( $html->next_token() ) {
+		if ( $tag === $html->get_tag() && $html->is_tag_closer() ) {
+			$heading_text = preg_replace( '/[\s\p{Z}]+/u', ' ', $heading_text ) ?? '';
+			return 1 === preg_match( '/\Aماذا يعني هذا للمستثمر *[؟?]?\z/u', trim( $heading_text ) );
+		}
+
+		if ( '#text' === $html->get_token_type() ) {
+			$heading_text .= $html->get_modifiable_text();
+		}
+	}
+
+	return false;
+}
+
+/**
  * Return the selected topic only when it exists in the editorial taxonomy.
  */
 function selected_topic(): string {
@@ -36,6 +77,17 @@ function selected_topic(): string {
 	}
 
 	return get_term_by( 'slug', $topic, 'alb_topic' ) instanceof \WP_Term ? $topic : '';
+}
+
+/**
+ * Page the mixed feed independently of WordPress's posts-only main query.
+ */
+function archive_page_number(): int {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public GET pagination only reads published entries.
+	$requested_page = isset( $_GET['news_page'] ) && is_string( $_GET['news_page'] ) ? wp_unslash( $_GET['news_page'] ) : '';
+	$page_number    = filter_var( $requested_page, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) );
+
+	return false === $page_number ? 1 : $page_number;
 }
 
 /**
@@ -121,7 +173,7 @@ function filter_url( string $type, string $topic ): string {
 		$arguments['topic'] = sanitize_title( $topic );
 	}
 
-	$base_url = remove_query_arg( array( 'news_type', 'topic', 'paged' ), news_url() );
+	$base_url = remove_query_arg( array( 'news_type', 'topic', 'news_page' ), news_url() );
 
 	return array() === $arguments ? $base_url : add_query_arg( $arguments, $base_url );
 }

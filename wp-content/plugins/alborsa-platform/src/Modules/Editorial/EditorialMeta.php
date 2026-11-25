@@ -17,6 +17,7 @@ final class EditorialMeta {
 	public const REVIEWER_ID      = 'alb_reviewer_id';
 	public const LAST_REVIEWED_AT = 'alb_last_reviewed_at';
 	public const DISCLOSURE       = 'alb_editorial_disclosure';
+	public const INVESTOR_NOTE    = 'alb_investor_note';
 	public const RSS_ITEM_HASH    = '_alb_rss_item_hash';
 
 	private const POST_TYPES = array(
@@ -26,6 +27,8 @@ final class EditorialMeta {
 	);
 
 	public function register(): void {
+		$this->register_string( 'post', self::INVESTOR_NOTE, array( $this, 'sanitize_textarea' ), false );
+
 		foreach ( self::POST_TYPES as $post_type ) {
 			$this->register_string( $post_type, self::SOURCE_NAME, array( $this, 'sanitize_text' ), true );
 			$this->register_string( $post_type, self::SOURCE_URL, array( $this, 'sanitize_http_url' ), true );
