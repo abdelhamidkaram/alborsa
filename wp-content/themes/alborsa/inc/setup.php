@@ -19,6 +19,24 @@ if ( ! \defined( 'ABSPATH' ) ) {
 function register_hooks(): void {
 	add_action( 'after_setup_theme', __NAMESPACE__ . '\\setup' );
 	add_action( 'after_setup_theme', __NAMESPACE__ . '\\set_content_width', 0 );
+
+	remove_action( 'wp_head', 'wp_site_icon', 99 );
+	remove_action( 'admin_head', 'wp_site_icon' );
+	remove_action( 'login_head', 'wp_site_icon', 99 );
+
+	add_action( 'wp_head', __NAMESPACE__ . '\\render_site_icon', 99 );
+	add_action( 'admin_head', __NAMESPACE__ . '\\render_site_icon', 99 );
+	add_action( 'login_head', __NAMESPACE__ . '\\render_site_icon', 99 );
+}
+
+/**
+ * Use the official standalone brand mark as the browser icon everywhere.
+ */
+function render_site_icon(): void {
+	?>
+	<link rel="icon" href="<?php echo esc_url( get_theme_file_uri( 'assets/images/alborsa-mark.svg' ) ); ?>" type="image/svg+xml">
+	<link rel="icon" href="<?php echo esc_url( get_theme_file_uri( 'assets/images/alborsa-mark-dark.svg' ) ); ?>" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+	<?php
 }
 
 /**
@@ -33,7 +51,9 @@ function setup(): void {
 	add_theme_support( 'responsive-embeds' );
 	add_theme_support( 'align-wide' );
 	add_theme_support( 'wp-block-styles' );
+	add_theme_support( 'editor-styles' );
 	add_theme_support( 'customize-selective-refresh-widgets' );
+	add_editor_style( array( 'assets/css/tokens.css', 'assets/css/editor.css' ) );
 	add_theme_support(
 		'html5',
 		array(
@@ -47,21 +67,12 @@ function setup(): void {
 			'navigation-widgets',
 		)
 	);
-	add_theme_support(
-		'custom-logo',
-		array(
-			'height'      => 72,
-			'width'       => 260,
-			'flex-height' => true,
-			'flex-width'  => true,
-		)
-	);
-
 	register_nav_menus(
 		array(
-			'primary' => __( 'التنقل الرئيسي', 'alborsa' ),
-			'utility' => __( 'التنقل المساعد', 'alborsa' ),
-			'footer'  => __( 'روابط التذييل', 'alborsa' ),
+			'primary'        => __( 'التنقل الرئيسي', 'alborsa' ),
+			'footer_markets' => __( 'التذييل: الأسواق والأدوات', 'alborsa' ),
+			'footer_learn'   => __( 'التذييل: تعلّم', 'alborsa' ),
+			'footer_about'   => __( 'التذييل: عن البورصة', 'alborsa' ),
 		)
 	);
 

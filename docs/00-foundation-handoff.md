@@ -35,8 +35,9 @@
 - Rewrite rules use a versioned Foundation service and are soft-flushed once, at late `init`, after activation or a rewrite contract version change.
 - Isolated unit tests verify schema SQL definition and migration lifecycle orchestration.
 - Quality checks run with `composer quality` from the plugin directory.
-- A standalone custom theme now lives at `wp-content/themes/alborsa`. It implements the approved RTL-first Editorial Signal design system, responsive site chrome, the complete homepage composition, news/analysis/education archives, markets/brokers/tools landing pages, editorial and asset singles, search, and 404 states.
+- A standalone custom theme lives at `wp-content/themes/alborsa`. On 2026-11-24 its visual layer began a clean rebuild from the approved Figma file: the new light/dark token foundation, WordPress editor palette, global header, theme switcher, accessible market ticker, mobile bottom navigation, global footer, and the complete 390px mobile design-system layer are implemented. `mobile-system.css` now applies the approved typography, spacing, cards, fields, lists, mobile data tables, calculators, broker controls, content states, overlays, and safe-area rules to the existing page templates. On phone widths the header is reduced to the official standalone brand mark and theme switcher while five primary destinations remain fixed above the device safe area; the footer keeps its compact risk notice, official brand mark and description row, three-column RTL link layout, and copyright strip. The official 123×44 Alborsa SVG variants remain reserved for full-logo placements; the dedicated 25×26 mark supplied by the user is now the only geometry used for compact brand icons and for the browser icon across frontend, login, and admin contexts, with a palette-matched dark variant. The previous Editorial Signal CSS files were removed; individual pages still require final comparison with their page-specific Figma frames.
 - The theme reads only published WordPress content and the documented public asset identity fields. It does not read the quote table or provider mappings, manufacture prices, or activate broker CTAs. Calculator services now exist, but their theme forms remain an integration task.
+- The news section now has a dedicated mixed post/analysis archive for both the configured posts page and `/akhabar/` page fallback, with bounded type/topic filtering, dated rows, pagination, a published-news sidebar, and a single-post reading layout with editorial provenance, related content, and functional sharing. Forecasts, saving, and notifications remain unavailable; the screenshot's mentioned-asset quote cards await an approved public article-to-asset read model and licensed data.
 
 ## Not implemented
 
@@ -45,6 +46,7 @@
 - Real market providers, retry/backoff policy, user accounts, watchlists, or alerts. The complete provider-neutral quote runtime is implemented, but no external adapter is selected and no server cron entry is installed while D-001 remains open.
 - Broker editorial scoring, public review intake, verified-review labels, and anti-spam integration remain blocked by D-003, D-004, and D-013. Affiliate CTAs remain unavailable until D-005 is approved and implemented.
 - Live WordPress visual QA, real content population, menu/page assignment, and compatibility checks with the installed Polylang, Yoast, Breeze, and Object Cache Pro configuration remain staging tasks.
+- The shared mobile system is applied across the homepage, archive, single, search, markets, tools, brokers, and state views. Final page-specific visual matching and desktop reconstruction still require their own Figma frames; do not use the previous theme styling as a fallback visual reference.
 
 ## Before the next change
 

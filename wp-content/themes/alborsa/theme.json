@@ -11,31 +11,35 @@
       "defaultGradients": false,
       "defaultPalette": false,
       "palette": [
-        {"slug": "midnight-market", "color": "#0A1628", "name": "كحلي السوق"},
-        {"slug": "newsroom-navy", "color": "#122040", "name": "كحلي غرفة الأخبار"},
-        {"slug": "tadawul-gold", "color": "#C9A84C", "name": "ذهبي تداول"},
-        {"slug": "data-teal", "color": "#0D7377", "name": "تيل البيانات"},
-        {"slug": "cool-surface", "color": "#F2F5FA", "name": "سطح بارد"},
-        {"slug": "surface-raised", "color": "#FFFFFF", "name": "سطح مرتفع"},
-        {"slug": "ink-primary", "color": "#16243A", "name": "حبر أساسي"},
-        {"slug": "market-up", "color": "#1A7A4A", "name": "ارتفاع"},
-        {"slug": "market-down", "color": "#C0392B", "name": "انخفاض"}
+        {"slug": "paper", "color": "#FDFCFA", "name": "ورق"},
+        {"slug": "card", "color": "#FFFFFF", "name": "بطاقة"},
+        {"slug": "ink", "color": "#15181C", "name": "حبر"},
+        {"slug": "body", "color": "#4B5058", "name": "نص"},
+        {"slug": "muted", "color": "#686D75", "name": "خافت"},
+        {"slug": "rule", "color": "#E3DDD1", "name": "فاصل"},
+        {"slug": "cobalt", "color": "#1F45C9", "name": "كوبالت"},
+        {"slug": "saffron", "color": "#F0B23A", "name": "زعفران"},
+        {"slug": "market-up", "color": "#12784F", "name": "ارتفاع"},
+        {"slug": "market-down", "color": "#C2352B", "name": "انخفاض"}
       ]
     },
     "layout": {
       "contentSize": "760px",
-      "wideSize": "1408px"
+      "wideSize": "1440px"
     },
     "spacing": {
       "blockGap": true,
       "customSpacingSize": false,
       "defaultSpacingSizes": false,
       "spacingSizes": [
-        {"slug": "20", "size": "0.5rem", "name": "صغير"},
-        {"slug": "40", "size": "1rem", "name": "متوسط"},
-        {"slug": "60", "size": "1.5rem", "name": "كبير"},
-        {"slug": "80", "size": "2rem", "name": "أكبر"},
-        {"slug": "100", "size": "3rem", "name": "قسم"}
+        {"slug": "10", "size": "0.25rem", "name": "4"},
+        {"slug": "20", "size": "0.5rem", "name": "8"},
+        {"slug": "30", "size": "0.75rem", "name": "12"},
+        {"slug": "40", "size": "1rem", "name": "16"},
+        {"slug": "50", "size": "1.5rem", "name": "24"},
+        {"slug": "60", "size": "2rem", "name": "32"},
+        {"slug": "70", "size": "3rem", "name": "48"},
+        {"slug": "80", "size": "4rem", "name": "64"}
       ],
       "units": ["px", "rem", "em", "%", "vw"]
     },
@@ -45,51 +49,50 @@
       "dropCap": false,
       "fontFamilies": [
         {
-          "fontFamily": "\"Noto Kufi Arabic\", \"Cairo\", Tahoma, sans-serif",
-          "name": "عرض عربي",
-          "slug": "display-arabic"
-        },
-        {
-          "fontFamily": "\"Noto Sans Arabic\", \"Cairo\", Tahoma, Arial, sans-serif",
-          "name": "نص عربي",
-          "slug": "body-arabic"
+          "fontFamily": "\"Cairo\", Tahoma, Arial, sans-serif",
+          "name": "Cairo",
+          "slug": "cairo"
         }
       ],
       "fontSizes": [
-        {"slug": "small", "size": "0.875rem", "name": "صغير"},
-        {"slug": "medium", "size": "1rem", "name": "أساسي"},
-        {"slug": "large", "size": "1.25rem", "name": "كبير"},
-        {"slug": "x-large", "size": "clamp(1.75rem, 3vw, 3rem)", "name": "عنوان"}
+        {"slug": "small", "size": "0.75rem", "name": "Small"},
+        {"slug": "label", "size": "0.875rem", "name": "Label"},
+        {"slug": "body", "size": "1rem", "name": "Body"},
+        {"slug": "card-title", "size": "1.25rem", "name": "Card title"},
+        {"slug": "heading-2", "size": "1.5rem", "name": "H2"},
+        {"slug": "heading-1", "size": "1.875rem", "name": "H1"},
+        {"slug": "hero", "size": "clamp(2.125rem, 3.6vw, 3.25rem)", "name": "Hero"}
       ],
       "lineHeight": true
     }
   },
   "styles": {
     "color": {
-      "background": "#F2F5FA",
-      "text": "#16243A"
+      "background": "var(--color-page)",
+      "text": "var(--color-text-body)"
     },
     "spacing": {
       "blockGap": "1.5rem"
     },
     "typography": {
-      "fontFamily": "var:preset|font-family|body-arabic",
-      "fontSize": "1rem",
-      "lineHeight": "1.8"
+      "fontFamily": "var:preset|font-family|cairo",
+      "fontSize": "var(--font-size-body)",
+      "fontWeight": "400",
+      "lineHeight": "var(--line-height-body)"
     },
     "elements": {
       "button": {
         "border": {"radius": "8px"},
-        "color": {"background": "#C9A84C", "text": "#0A1628"},
-        "spacing": {"padding": {"top": "0.75rem", "right": "1.25rem", "bottom": "0.75rem", "left": "1.25rem"}},
+        "color": {"background": "var(--color-accent)", "text": "var(--color-accent-contrast)"},
+        "spacing": {"padding": {"top": "0.875rem", "right": "1.25rem", "bottom": "0.875rem", "left": "1.25rem"}},
         "typography": {"fontWeight": "700"}
       },
       "heading": {
-        "color": {"text": "#16243A"},
-        "typography": {"fontFamily": "var:preset|font-family|display-arabic", "fontWeight": "700", "lineHeight": "1.3"}
+        "color": {"text": "var(--color-text)"},
+        "typography": {"fontFamily": "var:preset|font-family|cairo", "lineHeight": "var(--line-height-heading)"}
       },
       "link": {
-        "color": {"text": "#0D7377"}
+        "color": {"text": "var(--color-accent)"}
       }
     }
   }

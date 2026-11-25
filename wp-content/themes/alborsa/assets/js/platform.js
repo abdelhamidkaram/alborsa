@@ -3,6 +3,8 @@
 
 	const config = window.alborsaPlatform || {};
 	const restBase = 'string' === typeof config.restBase ? config.restBase.replace(/\/+$/, '') + '/' : '';
+	const tickerTime = document.querySelector('[data-market-ticker-time]');
+	let latestTickerTimestamp = Number.NEGATIVE_INFINITY;
 
 	if (!restBase) {
 		return;
@@ -97,6 +99,27 @@
 		return container.querySelector('[data-quote-' + role + ']');
 	}
 
+	function updateTickerTime(value) {
+		if (!(tickerTime instanceof HTMLTimeElement) || !value) {
+			return;
+		}
+
+		const date = new Date(value);
+		const timestamp = date.getTime();
+
+		if (!Number.isFinite(timestamp) || timestamp <= latestTickerTimestamp) {
+			return;
+		}
+
+		latestTickerTimestamp = timestamp;
+		tickerTime.dateTime = date.toISOString();
+		tickerTime.textContent = new Intl.DateTimeFormat('ar-SA-u-nu-latn', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hourCycle: 'h23',
+		}).format(date);
+	}
+
 	function quoteStatus(quote) {
 		if ('fresh' === quote.status) {
 			return text.fresh;
@@ -104,7 +127,7 @@
 
 		if ('delayed' === quote.status) {
 			const minutes = Math.max(1, Math.ceil(Number(quote.delay_seconds || 0) / 60));
-			return text.delayed + ' (' + minutes.toLocaleString('ar-SA') + ' د)';
+			return text.delayed + ' (' + minutes.toLocaleString('en-US') + ' ' + text.minuteShort + ')';
 		}
 
 		return 'stale' === quote.status ? text.stale : text.unavailable;
@@ -123,11 +146,10 @@
 
 		const negative = decimal.startsWith('-');
 		const parts = (negative ? decimal.slice(1) : decimal).split('.');
-		const integer = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '٬');
+		const integer = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 		const fraction = (parts[1] || '').slice(0, maximumFractionDigits).replace(/0+$/, '');
-		const localized = (negative ? '-' : '') + integer + (fraction ? '٫' + fraction : '');
 
-		return localized.replace(/[0-9]/g, (digit) => '٠١٢٣٤٥٦٧٨٩'[Number(digit)]);
+		return (negative ? '-' : '') + integer + (fraction ? '.' + fraction : '');
 	}
 
 	function renderQuote(container, quote) {
@@ -140,6 +162,7 @@
 
 		container.dataset.quoteState = quote.status || 'unavailable';
 		container.setAttribute('aria-busy', 'false');
+		updateTickerTime(quote.as_of);
 
 		if (price) {
 			price.textContent = quote.price ? formatDecimal(quote.price, 6) + currency : text.unavailable;
@@ -147,13 +170,21 @@
 
 		if (change) {
 			change.classList.remove('quote-value--up', 'quote-value--down');
-			change.textContent = null === quote.percent_change || 'undefined' === typeof quote.percent_change
-				? '—'
-				: formatDecimal(quote.percent_change, 2) + '%';
 
-			if (Number(quote.percent_change) > 0) {
+			const numericChange = Number(quote.percent_change);
+			const hasChange = null !== quote.percent_change &&
+				'undefined' !== typeof quote.percent_change &&
+				Number.isFinite(numericChange);
+			const direction = numericChange > 0 ? '▲' : numericChange < 0 ? '▼' : '';
+			const sign = numericChange > 0 ? '+' : '';
+
+			change.textContent = hasChange
+				? sign + formatDecimal(quote.percent_change, 2) + '% ' + direction
+				: '—';
+
+			if (numericChange > 0) {
 				change.classList.add('quote-value--up');
-			} else if (Number(quote.percent_change) < 0) {
+			} else if (numericChange < 0) {
 				change.classList.add('quote-value--down');
 			}
 		}
@@ -232,7 +263,7 @@
 
 		return Number.isNaN(date.getTime())
 			? String(value)
-			: new Intl.DateTimeFormat('ar-SA', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+			: new Intl.DateTimeFormat('ar-SA-u-nu-latn', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 	}
 
 	function safeUrl(value) {
@@ -349,10 +380,10 @@
 
 	function ratingLabel(rating) {
 		if (!rating || !rating.count || !rating.average) {
-			return 'لا توجد تقييمات منشورة';
+			return text.noReviews;
 		}
 
-		return formatDecimal(rating.average, 2) + ' / 5 (' + Number(rating.count).toLocaleString('ar-SA') + ')';
+		return formatDecimal(rating.average, 2) + ' ' + text.ratingScale + ' (' + Number(rating.count).toLocaleString('en-US') + ')';
 	}
 
 	function createCell(tag, content) {
@@ -433,8 +464,7 @@
 				try {
 					const payload = await fetchJson('brokers/compare?ids=' + selected.join(','));
 					renderBrokerComparison(output, Array.isArray(payload.items) ? payload.items : []);
-					const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-					output.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+					output.scrollIntoView({ behavior: 'auto', block: 'start' });
 				} catch (error) {
 					output.textContent = text.requestError;
 				} finally {
@@ -546,7 +576,7 @@
 			broker.reviews.forEach((review) => {
 				const entry = document.createElement('article');
 				const heading = document.createElement('h3');
-				heading.textContent = (review.author || 'مستخدم') + ' — ' + formatDecimal(review.rating, 0) + ' / ٥';
+				heading.textContent = (review.author || text.anonymousUser) + ' — ' + formatDecimal(review.rating, 0) + ' ' + text.ratingScale;
 				entry.append(heading);
 				if (review.created_at) {
 					const date = document.createElement('time');

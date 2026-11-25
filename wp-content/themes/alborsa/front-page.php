@@ -1,6 +1,6 @@
 <?php
 /**
- * Editorial Signal homepage.
+ * Front page template.
  *
  * @package Alborsa
  */

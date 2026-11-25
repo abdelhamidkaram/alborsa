@@ -1,6 +1,6 @@
 <?php
 /**
- * Global site header and mobile navigation.
+ * Global site header rebuilt from the approved Figma chrome.
  *
  * @package Alborsa
  */
@@ -8,10 +8,19 @@
 declare(strict_types=1);
 
 use function Alborsa\Theme\TemplateTags\navigation_items;
-use function Alborsa\Theme\TemplateTags\primary_menu_fallback;
+use function Alborsa\Theme\TemplateTags\site_logo;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
+}
+
+$registered_navigation = navigation_items();
+$fallback_navigation   = array();
+
+foreach ( array( 'markets', 'tools', 'brokers', 'news', 'education' ) as $navigation_key ) {
+	if ( isset( $registered_navigation[ $navigation_key ] ) ) {
+		$fallback_navigation[] = $registered_navigation[ $navigation_key ];
+	}
 }
 ?>
 <!doctype html>
@@ -24,18 +33,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'انتقل إلى المحتوى', 'alborsa' ); ?></a>
+
 <div class="site-chrome" data-site-chrome>
+	<?php get_template_part( 'template-parts/market-status' ); ?>
+
 	<header class="site-header" role="banner">
 		<div class="site-container site-header__inner">
-			<a class="site-wordmark" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="<?php esc_attr_e( 'البورصة — الرئيسية', 'alborsa' ); ?>">
-				<span class="site-wordmark__ar"><?php esc_html_e( 'البورصة', 'alborsa' ); ?></span>
-				<span class="site-wordmark__mark" aria-hidden="true"><i></i><i></i><i></i></span>
-				<span class="site-wordmark__latin" aria-hidden="true">alborsa.net</span>
-			</a>
+			<div class="site-header__brand">
+				<?php site_logo(); ?>
+			</div>
 
 			<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-menu-toggle>
-				<span class="menu-toggle__icon" aria-hidden="true"><i></i><i></i></span>
-				<span><?php esc_html_e( 'القائمة', 'alborsa' ); ?></span>
+				<svg class="menu-toggle__open" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none">
+					<path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+				</svg>
+				<svg class="menu-toggle__close" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none">
+					<path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+				</svg>
+				<span class="screen-reader-text" data-menu-toggle-label><?php esc_html_e( 'فتح القائمة الرئيسية', 'alborsa' ); ?></span>
 			</button>
 
 			<nav id="primary-navigation" class="primary-navigation" aria-label="<?php esc_attr_e( 'التنقل الرئيسي', 'alborsa' ); ?>" data-primary-navigation>
@@ -52,37 +67,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 					);
 					?>
 				<?php else : ?>
-					<?php primary_menu_fallback(); ?>
+					<ul class="primary-menu">
+						<?php foreach ( $fallback_navigation as $navigation_item ) : ?>
+							<li><a href="<?php echo esc_url( $navigation_item['url'] ); ?>"><?php echo esc_html( $navigation_item['label'] ); ?></a></li>
+						<?php endforeach; ?>
+					</ul>
 				<?php endif; ?>
 			</nav>
 
-			<details class="header-search">
-				<summary class="header-action">
-					<span class="header-action__search" aria-hidden="true"></span>
-					<span class="screen-reader-text"><?php esc_html_e( 'فتح البحث', 'alborsa' ); ?></span>
-				</summary>
-				<form class="header-search__panel" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-					<label for="header-search-field"><?php esc_html_e( 'ابحث في البورصة', 'alborsa' ); ?></label>
-					<div>
-						<input id="header-search-field" type="search" name="s" value="<?php echo esc_attr( get_search_query() ); ?>" placeholder="<?php esc_attr_e( 'شركة، خبر، تحليل أو دليل', 'alborsa' ); ?>">
-						<button type="submit"><?php esc_html_e( 'ابحث', 'alborsa' ); ?></button>
-					</div>
-				</form>
-			</details>
+			<div class="site-header__actions">
+				<button class="theme-toggle" type="button" aria-pressed="false" data-theme-toggle>
+					<svg class="theme-toggle__sun" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none">
+						<circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8" />
+						<path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+					</svg>
+					<svg class="theme-toggle__moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none">
+						<path d="M20.2 15.5A8.5 8.5 0 0 1 8.5 3.8 8.5 8.5 0 1 0 20.2 15.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+					</svg>
+				</button>
+				<a class="header-login" href="<?php echo esc_url( wp_login_url() ); ?>"><?php esc_html_e( 'دخول', 'alborsa' ); ?></a>
+				<a class="button button--primary button--large header-register" href="<?php echo esc_url( wp_registration_url() ); ?>"><?php esc_html_e( 'أنشئ حساباً', 'alborsa' ); ?></a>
+			</div>
 		</div>
 	</header>
-	<?php get_template_part( 'template-parts/market-status' ); ?>
 </div>
-<nav class="mobile-dock" aria-label="<?php esc_attr_e( 'الوجهات الرئيسية', 'alborsa' ); ?>">
-	<ul>
-		<?php foreach ( array_intersect_key( navigation_items(), array_flip( array( 'home', 'markets', 'news', 'tools', 'education' ) ) ) as $key => $navigation_item ) : ?>
-			<li>
-				<a class="mobile-dock__link mobile-dock__link--<?php echo esc_attr( $key ); ?>" href="<?php echo esc_url( $navigation_item['url'] ); ?>">
-					<span aria-hidden="true"></span>
-					<?php echo esc_html( $navigation_item['label'] ); ?>
-				</a>
-			</li>
-		<?php endforeach; ?>
-	</ul>
-</nav>
+
+<?php get_template_part( 'template-parts/mobile-navigation' ); ?>
+
 <main id="primary" class="site-main">

@@ -14,7 +14,21 @@ if ( ! \defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Return the navigation contract used by fallbacks and the mobile dock.
+ * Render the official Alborsa logo linked to the home page.
+ */
+function site_logo(): void {
+	?>
+	<a class="site-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="<?php esc_attr_e( 'البورصة — الرئيسية', 'alborsa' ); ?>">
+		<img class="site-logo__image site-logo__image--light" src="<?php echo esc_url( get_theme_file_uri( 'assets/images/alborsa-logo.svg' ) ); ?>" width="123" height="44" alt="" decoding="async">
+		<img class="site-logo__image site-logo__image--dark" src="<?php echo esc_url( get_theme_file_uri( 'assets/images/alborsa-logo-dark.svg' ) ); ?>" width="123" height="44" alt="" decoding="async">
+		<img class="site-logo__mark site-logo__mark--light" src="<?php echo esc_url( get_theme_file_uri( 'assets/images/alborsa-mark.svg' ) ); ?>" width="25" height="26" alt="" decoding="async">
+		<img class="site-logo__mark site-logo__mark--dark" src="<?php echo esc_url( get_theme_file_uri( 'assets/images/alborsa-mark-dark.svg' ) ); ?>" width="25" height="26" alt="" decoding="async">
+	</a>
+	<?php
+}
+
+/**
+ * Return the navigation contract used by the global navigation fallbacks.
  *
  * @return array<string, array{label: string, url: string}>
  */
@@ -52,17 +66,29 @@ function navigation_items(): array {
 }
 
 /**
- * Render the fallback primary navigation when no menu is assigned.
+ * Render one footer navigation column with a design-matched fallback.
  *
- * @param string $menu_class CSS class used by the target navigation.
+ * @param string                                           $location       Registered menu location.
+ * @param array<string, array{label: string, url: string}> $fallback_links Fallback links.
  */
-function primary_menu_fallback( string $menu_class = 'primary-menu' ): void {
+function footer_navigation( string $location, array $fallback_links ): void {
+	if ( has_nav_menu( $location ) ) {
+		wp_nav_menu(
+			array(
+				'theme_location' => $location,
+				'container'      => false,
+				'menu_class'     => 'footer-links',
+				'fallback_cb'    => false,
+				'depth'          => 1,
+			)
+		);
+
+		return;
+	}
 	?>
-	<ul class="<?php echo esc_attr( $menu_class ); ?>">
-		<?php foreach ( navigation_items() as $key => $navigation_item ) : ?>
-			<li class="menu-item menu-item--<?php echo esc_attr( $key ); ?>">
-				<a href="<?php echo esc_url( $navigation_item['url'] ); ?>"><?php echo esc_html( $navigation_item['label'] ); ?></a>
-			</li>
+	<ul class="footer-links">
+		<?php foreach ( $fallback_links as $footer_link ) : ?>
+			<li><a href="<?php echo esc_url( $footer_link['url'] ); ?>"><?php echo esc_html( $footer_link['label'] ); ?></a></li>
 		<?php endforeach; ?>
 	</ul>
 	<?php
